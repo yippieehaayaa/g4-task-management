@@ -1,0 +1,20 @@
+model Session {
+    id        String  @id @default(auto()) @map("_id") @db.ObjectId
+    token     String  @unique
+    ipAddress String?
+    userAgent String?
+
+    // Timestamps
+    createdAt DateTime  @default(now())
+    expiresAt DateTime
+    revokedAt DateTime?
+
+    // References
+    identityId String   @db.ObjectId
+    identity   Identity @relation(fields: [identityId], references: [id])
+
+    // Indexes
+    @@index([identityId])
+    @@index([expiresAt])
+    @@map("sessions")
+}

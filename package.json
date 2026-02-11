@@ -1,15 +1,23 @@
 {
-  "name": "g4-task-management",
+  "name": "g4",
+  "author": "Joshua Dave E. Oropilla <joshdave0915@gmail.com>",
   "private": true,
   "scripts": {
     "build": "turbo run build",
+    "deps:audit": "syncpack list",
+    "deps:fix": "syncpack fix-mismatches",
+    "deps:format": "syncpack format",
+    "deps:mismatch": "syncpack list-mismatches",
+    "deps:update": "syncpack update --specs=latest,range && syncpack fix-mismatches",
     "dev": "turbo run dev",
-    "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "lint": "biome check .",
+    "lint:fix": "biome check --fix .",
+    "format": "biome format --write .",
     "check-types": "turbo run check-types"
   },
   "devDependencies": {
-    "prettier": "^3.7.4",
+    "@biomejs/biome": "2.3.14",
+    "syncpack": "^13.0.4",
     "turbo": "^2.8.5",
     "typescript": "5.9.2"
   },
@@ -19,6 +27,8 @@
   "packageManager": "npm@11.3.0",
   "workspaces": [
     "apps/*",
+    "apis/*",
+    "dbs/*",
     "packages/*"
   ]
 }

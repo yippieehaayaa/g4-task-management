@@ -1,0 +1,89 @@
+model Identity {
+    id             String         @id @default(auto()) @map("_id") @db.ObjectId
+    username       String         @unique
+    email          String?        @unique
+    hash           String
+    salt           String
+    changePassword Boolean        @default(true)
+    active         Boolean        @default(true)
+    kind           IdentityKind   @default(USER)
+    status         IdentityStatus @default(PENDING_VERIFICATION)
+
+    // Timestamps
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    deletedAt DateTime?
+
+    // Junction References (many-to-many)
+    roleIds  String[] @db.ObjectId
+    groupIds String[] @db.ObjectId
+
+    // Junction Relations
+    roles  Role[]  @relation(fields: [roleIds], references: [id])
+    groups Group[] @relation(fields: [groupIds], references: [id])
+
+    // Relations
+    otps              Otp[]
+    sessions          Session[]
+    passwordHistories PasswordHistory[]
+    emailHistories    EmailHistory[]
+    ipAddresses       IpAddress[]
+
+    // Indexes
+    @@index([status])
+    @@index([deletedAt])
+    @@map("identities")
+}
+
+model PasswordHistory {
+    id        String  @id @default(auto()) @map("_id") @db.ObjectId
+    password  String
+    ipAddress String?
+
+    // Timestamps
+    changedAt DateTime @default(now())
+
+    // References
+    identityId String   @db.ObjectId
+    identity   Identity @relation(fields: [identityId], references: [id])
+
+    // Indexes
+    @@index([identityId])
+    @@map("password_histories")
+}
+
+model EmailHistory {
+    id        String  @id @default(auto()) @map("_id") @db.ObjectId
+    oldEmail  String?
+    newEmail  String
+    ipAddress String?
+
+    // Timestamps
+    changedAt DateTime @default(now())
+
+    // References
+    identityId String   @db.ObjectId
+    identity   Identity @relation(fields: [identityId], references: [id])
+
+    // Indexes
+    @@index([identityId])
+    @@map("email_histories")
+}
+
+model IpAddress {
+    id        String  @id @default(auto()) @map("_id") @db.ObjectId
+    address   String
+    userAgent String?
+
+    // Timestamps
+    loggedAt DateTime @default(now())
+
+    // References
+    identityId String   @db.ObjectId
+    identity   Identity @relation(fields: [identityId], references: [id])
+
+    // Indexes
+    @@index([identityId])
+    @@index([address])
+    @@map("ip_addresses")
+}

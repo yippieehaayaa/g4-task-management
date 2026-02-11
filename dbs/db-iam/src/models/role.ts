@@ -1,0 +1,94 @@
+import { prisma } from "../client";
+
+type CreateRoleInput = {
+  name: string;
+  description?: string;
+};
+
+type UpdateRoleInput = {
+  name?: string;
+  description?: string;
+};
+
+const createRole = async (input: CreateRoleInput) => {
+  return await prisma.role.create({ data: input });
+};
+
+const findRoleById = async (id: string) => {
+  return await prisma.role.findUnique({
+    where: { id, deletedAt: null },
+    include: { policies: true },
+  });
+};
+
+const findRoleByName = async (name: string) => {
+  return await prisma.role.findUnique({
+    where: { name, deletedAt: null },
+  });
+};
+
+const updateRole = async (id: string, input: UpdateRoleInput) => {
+  return await prisma.role.update({
+    where: { id, deletedAt: null },
+    data: input,
+  });
+};
+
+const softDeleteRole = async (id: string) => {
+  return await prisma.role.update({
+    where: { id },
+    data: { deletedAt: new Date() },
+  });
+};
+
+const addPoliciesToRole = async (roleId: string, policyIds: string[]) => {
+  return await prisma.role.update({
+    where: { id: roleId, deletedAt: null },
+    data: { policyIds: { push: policyIds } },
+  });
+};
+
+const removePoliciesFromRole = async (roleId: string, policyIds: string[]) => {
+  const role = await prisma.role.findUnique({ where: { id: roleId } });
+  if (!role) throw new Error("Role not found");
+
+  const filtered = role.policyIds.filter((id) => !policyIds.includes(id));
+
+  return await prisma.role.update({
+    where: { id: roleId },
+    data: { policyIds: { set: filtered } },
+  });
+};
+
+const assignRoleToIdentity = async (identityId: string, roleId: string) => {
+  return await prisma.identity.update({
+    where: { id: identityId, deletedAt: null },
+    data: { roleIds: { push: roleId } },
+  });
+};
+
+const removeRoleFromIdentity = async (identityId: string, roleId: string) => {
+  const identity = await prisma.identity.findUnique({
+    where: { id: identityId },
+  });
+  if (!identity) throw new Error("Identity not found");
+
+  const filtered = identity.roleIds.filter((id) => id !== roleId);
+
+  return await prisma.identity.update({
+    where: { id: identityId },
+    data: { roleIds: { set: filtered } },
+  });
+};
+
+export {
+  createRole,
+  findRoleById,
+  findRoleByName,
+  updateRole,
+  softDeleteRole,
+  addPoliciesToRole,
+  removePoliciesFromRole,
+  assignRoleToIdentity,
+  removeRoleFromIdentity,
+};

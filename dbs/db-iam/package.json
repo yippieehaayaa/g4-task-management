@@ -1,0 +1,35 @@
+{
+  "name": "@g4/db-iam",
+  "description": "Identity and Access Management Database",
+  "author": "Joshua Dave E. Oropilla <joshdave0915@gmail.com>",
+  "license": "MIT",
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "prisma": {
+    "schema": "prisma/schema"
+  },
+  "scripts": {
+    "db:generate": "prisma generate",
+    "db:build": "prisma generate && tsup src",
+    "db:push": "prisma db push",
+    "db:seed": "prisma db seed",
+    "watch": "tsup src --watch"
+  },
+  "devDependencies": {
+    "@g4/typescript-config": "*",
+    "@types/node": "^25.2.3",
+    "prisma": "6.19",
+    "tsup": "^8.5.1",
+    "typescript": "5.9.2"
+  }
+}

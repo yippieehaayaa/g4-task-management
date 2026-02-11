@@ -1,0 +1,23 @@
+model Policy {
+    id          String       @id @default(auto()) @map("_id") @db.ObjectId
+    name        String       @unique
+    description String?
+    effect      PolicyEffect
+    actions     String[]
+    resources   String[]
+
+    // Timestamps
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    deletedAt DateTime?
+
+    // Junction References (many-to-many)
+    roleIds String[] @db.ObjectId
+
+    // Junction Relations
+    roles Role[] @relation(fields: [roleIds], references: [id])
+
+    // Indexes
+    @@index([deletedAt])
+    @@map("policies")
+}

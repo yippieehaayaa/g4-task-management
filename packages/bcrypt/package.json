@@ -1,0 +1,32 @@
+{
+  "name": "@g4/bcrypt",
+  "description": "Password hashing and verification",
+  "author": "Joshua Dave E. Oropilla <joshdave0915@gmail.com>",
+  "license": "MIT",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsup src",
+    "watch": "tsup src --watch"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0"
+  },
+  "devDependencies": {
+    "@g4/typescript-config": "*",
+    "@types/bcrypt": "^5.0.2",
+    "tsup": "^8.5.1",
+    "typescript": "5.9.2"
+  }
+}

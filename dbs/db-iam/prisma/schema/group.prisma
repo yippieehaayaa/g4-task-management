@@ -1,0 +1,22 @@
+model Group {
+    id          String  @id @default(auto()) @map("_id") @db.ObjectId
+    name        String  @unique
+    description String?
+
+    // Timestamps
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    deletedAt DateTime?
+
+    // Junction References (many-to-many)
+    identityIds String[] @db.ObjectId
+    roleIds     String[] @db.ObjectId
+
+    // Junction Relations
+    identities Identity[] @relation(fields: [identityIds], references: [id])
+    roles      Role[]     @relation(fields: [roleIds], references: [id])
+
+    // Indexes
+    @@index([deletedAt])
+    @@map("groups")
+}

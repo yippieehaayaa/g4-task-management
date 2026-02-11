@@ -1,0 +1,21 @@
+model Otp {
+    id       String     @id @default(auto()) @map("_id") @db.ObjectId
+    code     String
+    purpose  OtpPurpose
+    status   OtpStatus  @default(PENDING)
+    attempts Int        @default(0)
+
+    // Timestamps
+    sentAt     DateTime  @default(now())
+    expiresAt  DateTime
+    verifiedAt DateTime?
+
+    // References
+    identityId String   @db.ObjectId
+    identity   Identity @relation(fields: [identityId], references: [id])
+
+    // Indexes
+    @@index([identityId, purpose, status])
+    @@index([expiresAt])
+    @@map("otps")
+}

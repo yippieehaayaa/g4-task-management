@@ -1,0 +1,24 @@
+model Role {
+    id          String  @id @default(auto()) @map("_id") @db.ObjectId
+    name        String  @unique
+    description String?
+
+    // Timestamps
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    deletedAt DateTime?
+
+    // Junction References (many-to-many)
+    policyIds   String[] @db.ObjectId
+    identityIds String[] @db.ObjectId
+    groupIds    String[] @db.ObjectId
+
+    // Junction Relations
+    policies   Policy[]   @relation(fields: [policyIds], references: [id])
+    identities Identity[] @relation(fields: [identityIds], references: [id])
+    groups     Group[]    @relation(fields: [groupIds], references: [id])
+
+    // Indexes
+    @@index([deletedAt])
+    @@map("roles")
+}
