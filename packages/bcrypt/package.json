@@ -4,7 +4,6 @@
   "author": "Joshua Dave E. Oropilla <joshdave0915@gmail.com>",
   "license": "MIT",
   "version": "1.0.0",
-  "type": "module",
   "private": true,
   "exports": {
     ".": {

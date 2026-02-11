@@ -13,6 +13,7 @@
       "!**/dist",
       "!**/prisma",
       "!**/generated",
+      "!**/package.json",
       "!**/build"
     ]
   },
