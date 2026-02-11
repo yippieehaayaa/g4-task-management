@@ -4,5 +4,4 @@ export * from "./models/group";
 export * from "./models/otp";
 export * from "./models/policy";
 export * from "./models/role";
-export * from "./models/service";
 export * from "./models/session";
