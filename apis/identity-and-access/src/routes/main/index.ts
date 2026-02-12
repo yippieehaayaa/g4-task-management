@@ -6,4 +6,4 @@ router.get("/health", (_req, res) => {
   res.json({ status: "ok" });
 });
 
-export { router as mainRoutes };
+export default router;
