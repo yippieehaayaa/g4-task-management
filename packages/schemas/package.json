@@ -11,13 +11,8 @@
         "import": "./dist/index.mjs",
         "require": "./dist/index.cjs"
       },
-      "./hris": {
-        "types": "./dist/hris/index.d.ts",
-        "import": "./dist/hris/index.mjs",
-        "require": "./dist/hris/index.cjs"
-      },
       "./iam": {
-        "types": "./dist/iam/index.d.ts",
+        "types": "./src/iam/index.ts",
         "import": "./dist/iam/index.mjs",
         "require": "./dist/iam/index.cjs"
       }

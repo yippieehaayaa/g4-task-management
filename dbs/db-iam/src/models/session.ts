@@ -44,6 +44,16 @@ const findSessionByToken = async (token: string, identityId: string) => {
   });
 };
 
+const findActiveSessionByToken = async (token: string) => {
+  return await prisma.session.findUnique({
+    where: {
+      token,
+      revokedAt: null,
+      expiresAt: { gt: new Date() },
+    },
+  });
+};
+
 const findSessionById = async (id: string) => {
   return await prisma.session.findUnique({
     where: { id },
@@ -96,6 +106,7 @@ export {
   SESSION_PUBLIC_SELECT,
   createSession,
   findSessionByToken,
+  findActiveSessionByToken,
   findSessionById,
   listSessionsByIdentity,
   revokeSession,
