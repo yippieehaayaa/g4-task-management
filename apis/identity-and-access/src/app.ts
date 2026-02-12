@@ -2,7 +2,6 @@ import { errorHandler } from "@g4/error-handler";
 import cors from "cors";
 import express from "express";
 import helmet from "helmet";
-import { env } from "./config";
 import { apiRateLimiter } from "./middlewares/rateLimiter";
 import { requestId } from "./middlewares/requestId";
 import routes from "./routes";
@@ -13,7 +12,7 @@ app.disable("x-powered-by");
 app.use(helmet());
 app.use(
   cors({
-    origin: env.NODE_ENV === "production" ? false : "*",
+    origin: "*",
     methods: ["GET", "POST", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
     maxAge: 86400,

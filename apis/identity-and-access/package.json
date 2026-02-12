@@ -11,7 +11,6 @@
     "@g4/logger": "*",
     "@g4/schemas": "*",
     "@g4/validate": "*",
-    "@types/cors": "^2.8.19",
     "cors": "^2.8.6",
     "dotenv": "^17.2.4",
     "express": "^5.2.1",
@@ -24,6 +23,7 @@
   "devDependencies": {
     "@g4/typescript-config": "*",
     "@types/express": "^5.0.6",
+    "@types/cors": "^2.8.19",
     "typescript": "5.9.2"
   },
   "scripts": {
