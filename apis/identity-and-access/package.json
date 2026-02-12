@@ -11,10 +11,13 @@
     "@g4/logger": "*",
     "@g4/schemas": "*",
     "@g4/validate": "*",
+    "@types/cors": "^2.8.19",
+    "cors": "^2.8.6",
     "dotenv": "^17.2.4",
     "express": "^5.2.1",
     "express-jwt-permissions": "^1.3.7",
     "express-rate-limit": "^8.2.1",
+    "helmet": "^8.1.0",
     "jose": "^6.0.11",
     "zod": "^4.3.6"
   },
