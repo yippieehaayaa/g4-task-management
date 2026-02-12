@@ -6,6 +6,10 @@ import {
   prisma,
 } from "../client";
 
+type AuthIdentity = Prisma.IdentityGetPayload<{
+  select: typeof IDENTITY_AUTH_SELECT;
+}>;
+
 type CreateIdentityInput = {
   username: string;
   email?: string;
@@ -274,6 +278,8 @@ const trackIpAddress = async (
 
 export {
   IDENTITY_PUBLIC_SELECT,
+  IDENTITY_AUTH_SELECT,
+  type AuthIdentity,
   createIdentity,
   verifyIdentity,
   findIdentityById,

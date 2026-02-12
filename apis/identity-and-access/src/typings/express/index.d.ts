@@ -1,15 +1,10 @@
 import "express";
 
+import type { AuthIdentity } from "@g4/db-iam";
+
 declare global {
   namespace Express {
-    interface Identity {
-      id: string;
-      username: string;
-      email: string | null;
-      active: boolean;
-      kind: import("@g4/db-iam").IdentityKind;
-      status: import("@g4/db-iam").IdentityStatus;
-      deletedAt: Date | null;
+    interface Identity extends AuthIdentity {
       permissions: string[];
     }
 
