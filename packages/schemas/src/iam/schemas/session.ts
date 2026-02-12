@@ -8,4 +8,9 @@ const createSessionSchema = z.object({
   expiresInHours: z.number().int().positive().optional(),
 });
 
-export { createSessionSchema };
+const refreshTokenSchema = z.object({
+  refreshToken: z.string().min(1),
+  identityId: z.string().min(1),
+});
+
+export { createSessionSchema, refreshTokenSchema };

@@ -6,6 +6,12 @@ type IdentityBody = Prisma.IdentityGetPayload<object>;
 
 declare global {
   namespace Express {
-    interface Identity extends IdentityBody {}
+    interface Identity extends IdentityBody {
+      permissions: string[];
+    }
+
+    interface Request {
+      identity: Identity;
+    }
   }
 }
