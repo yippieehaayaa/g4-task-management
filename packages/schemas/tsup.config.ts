@@ -17,22 +17,4 @@ export default defineConfig({
   skipNodeModulesBundle: true,
   metafile: true,
   external: ["zod"],
-  esbuildOptions(options) {
-    options.conditions = ["module"];
-    options.chunkNames = "_chunks/[name]-[hash]";
-    options.assetNames = "_assets/[name]-[hash]";
-    // Increase memory limit
-    options.target = "es2020";
-    options.bundle = true;
-    options.logLevel = "info";
-    options.mainFields = ["module", "main"];
-    options.legalComments = "none";
-    options.ignoreAnnotations = true;
-
-    // Memory management
-    options.minifyIdentifiers = true;
-    options.minifySyntax = true;
-    options.minifyWhitespace = true;
-    options.treeShaking = true;
-  },
 });
