@@ -1,12 +1,15 @@
 import "express";
 
-import type { Prisma } from "@g4/db-iam";
-
-type IdentityBody = Prisma.IdentityGetPayload<object>;
-
 declare global {
   namespace Express {
-    interface Identity extends IdentityBody {
+    interface Identity {
+      id: string;
+      username: string;
+      email: string | null;
+      active: boolean;
+      kind: import("@g4/db-iam").IdentityKind;
+      status: import("@g4/db-iam").IdentityStatus;
+      deletedAt: Date | null;
       permissions: string[];
     }
 
