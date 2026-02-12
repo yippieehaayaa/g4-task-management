@@ -1,23 +1,23 @@
-import { validateBody, validateParams, validateQuery } from "@g4/validate";
 import {
-  createRoleSchema,
-  updateRoleSchema,
   addPoliciesToRoleSchema,
-  removePoliciesFromRoleSchema,
   assignRoleToIdentitySchema,
-  removeRoleFromIdentitySchema,
+  createRoleSchema,
   objectIdParamSchema,
   paginationQuerySchema,
+  removePoliciesFromRoleSchema,
+  removeRoleFromIdentitySchema,
+  updateRoleSchema,
 } from "@g4/schemas/iam";
+import { validateBody, validateParams, validateQuery } from "@g4/validate";
 import { Router } from "express";
 import { authorize } from "../../middlewares/authorize";
-import { list } from "./controllers/list";
 import { create } from "./controllers/create";
+import { assignIdentity, removeIdentity } from "./controllers/identities";
+import { list } from "./controllers/list";
+import { addPolicies, removePolicies } from "./controllers/policies";
+import { remove } from "./controllers/remove";
 import { show } from "./controllers/show";
 import { update } from "./controllers/update";
-import { remove } from "./controllers/remove";
-import { addPolicies, removePolicies } from "./controllers/policies";
-import { assignIdentity, removeIdentity } from "./controllers/identities";
 
 const router = Router();
 

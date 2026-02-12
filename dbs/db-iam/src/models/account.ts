@@ -62,6 +62,16 @@ const IDENTITY_PUBLIC_SELECT = {
   groupIds: true,
 } satisfies Prisma.IdentitySelect;
 
+const IDENTITY_AUTH_SELECT = {
+  id: true,
+  username: true,
+  email: true,
+  active: true,
+  kind: true,
+  status: true,
+  deletedAt: true,
+} satisfies Prisma.IdentitySelect;
+
 const buildIdentityWhere = (
   input: Pick<ListIdentitiesInput, "search" | "status" | "kind">,
 ): Prisma.IdentityWhereInput => ({
@@ -143,6 +153,7 @@ const verifyIdentity = async (input: VerifyIdentityInput) => {
 const findIdentityById = async (id: string) => {
   return await prisma.identity.findUnique({
     where: { id, deletedAt: null },
+    select: IDENTITY_AUTH_SELECT,
   });
 };
 

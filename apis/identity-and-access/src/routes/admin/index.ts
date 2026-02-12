@@ -2,12 +2,12 @@ import { validateParams } from "@g4/validate";
 import { Router } from "express";
 import { z } from "zod";
 import { authorize } from "../../middlewares/authorize";
+import { expireOtps, listOtps } from "./controllers/otps";
 import {
   listSessions,
-  revokeSession,
   revokeAllSessions,
+  revokeSession,
 } from "./controllers/sessions";
-import { listOtps, expireOtps } from "./controllers/otps";
 
 const router = Router();
 

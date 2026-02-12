@@ -1,21 +1,21 @@
-import { validateBody, validateParams } from "@g4/validate";
 import {
+  changeEmailBodySchema,
+  changePasswordBodySchema,
   createIdentitySchema,
   loginSchema,
   refreshTokenBodySchema,
-  changePasswordBodySchema,
-  changeEmailBodySchema,
 } from "@g4/schemas/iam";
+import { validateBody, validateParams } from "@g4/validate";
 import { Router } from "express";
 import { z } from "zod";
 import { authenticate } from "../../middlewares/authenticate";
 import { authRateLimiter } from "../../middlewares/rateLimiter";
-import { register } from "./controllers/register";
+import { changeEmail } from "./controllers/email";
 import { login } from "./controllers/login";
-import { refresh } from "./controllers/refresh";
 import { logout } from "./controllers/logout";
 import { changePassword } from "./controllers/password";
-import { changeEmail } from "./controllers/email";
+import { refresh } from "./controllers/refresh";
+import { register } from "./controllers/register";
 import { listSessions, revokeSession } from "./controllers/session";
 
 const router = Router();

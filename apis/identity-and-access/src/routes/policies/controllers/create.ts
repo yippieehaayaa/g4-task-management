@@ -1,8 +1,8 @@
 import { createPolicy, findPolicyByName } from "@g4/db-iam";
 import { ConflictError } from "@g4/error-handler";
 import type { createPolicySchema } from "@g4/schemas/iam";
-import { typedHandler } from "../../../utils/typedHandler";
 import type { z } from "zod";
+import { typedHandler } from "../../../utils/typedHandler";
 
 type Body = z.infer<typeof createPolicySchema>;
 

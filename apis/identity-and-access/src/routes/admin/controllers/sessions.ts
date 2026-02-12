@@ -4,6 +4,7 @@ import {
   revokeSessionById,
 } from "@g4/db-iam";
 import { NotFoundError } from "@g4/error-handler";
+import { audit } from "../../../utils/audit";
 import { typedHandler } from "../../../utils/typedHandler";
 
 const listSessions = typedHandler<{ identityId: string }>(async (req, res) => {
@@ -19,6 +20,16 @@ const revokeSession = typedHandler<{ identityId: string; sessionId: string }>(
       throw new NotFoundError("Session not found");
     }
 
+    audit({
+      event: "session.revoked",
+      actorId: req.identity.id,
+      targetId: req.params.identityId,
+      ip: req.ip,
+      requestId: req.id,
+      userAgent: req.headers["user-agent"],
+      metadata: { sessionId: req.params.sessionId },
+    });
+
     res.sendStatus(204);
   },
 );
@@ -26,6 +37,16 @@ const revokeSession = typedHandler<{ identityId: string; sessionId: string }>(
 const revokeAllSessions = typedHandler<{ identityId: string }>(
   async (req, res) => {
     await revokeAll(req.params.identityId);
+
+    audit({
+      event: "session.revoked.all",
+      actorId: req.identity.id,
+      targetId: req.params.identityId,
+      ip: req.ip,
+      requestId: req.id,
+      userAgent: req.headers["user-agent"],
+    });
+
     res.sendStatus(204);
   },
 );

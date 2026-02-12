@@ -6,14 +6,14 @@ import {
 } from "@g4/db-iam";
 import { ForbiddenError, UnauthorizedError } from "@g4/error-handler";
 import type { refreshTokenBodySchema } from "@g4/schemas/iam";
-import { typedHandler } from "../../../utils/typedHandler";
+import type { z } from "zod";
 import { env } from "../../../config";
 import { resolvePermissions } from "../../../utils/permissions";
 import {
   generateAccessToken,
   generateRefreshToken,
 } from "../../../utils/token";
-import type { z } from "zod";
+import { typedHandler } from "../../../utils/typedHandler";
 
 type Body = z.infer<typeof refreshTokenBodySchema>;
 

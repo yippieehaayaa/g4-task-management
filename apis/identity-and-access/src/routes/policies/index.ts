@@ -1,17 +1,17 @@
-import { validateBody, validateParams, validateQuery } from "@g4/validate";
 import {
   createPolicySchema,
-  updatePolicySchema,
   objectIdParamSchema,
   paginationQuerySchema,
+  updatePolicySchema,
 } from "@g4/schemas/iam";
+import { validateBody, validateParams, validateQuery } from "@g4/validate";
 import { Router } from "express";
 import { authorize } from "../../middlewares/authorize";
-import { list } from "./controllers/list";
 import { create } from "./controllers/create";
+import { list } from "./controllers/list";
+import { remove } from "./controllers/remove";
 import { show } from "./controllers/show";
 import { update } from "./controllers/update";
-import { remove } from "./controllers/remove";
 
 const router = Router();
 

@@ -1,14 +1,15 @@
 import { createSession, verifyIdentity } from "@g4/db-iam";
 import { ForbiddenError } from "@g4/error-handler";
 import type { loginSchema } from "@g4/schemas/iam";
-import { typedHandler } from "../../../utils/typedHandler";
+import type { z } from "zod";
 import { env } from "../../../config";
+import { audit } from "../../../utils/audit";
 import { resolvePermissions } from "../../../utils/permissions";
 import {
   generateAccessToken,
   generateRefreshToken,
 } from "../../../utils/token";
-import type { z } from "zod";
+import { typedHandler } from "../../../utils/typedHandler";
 
 type Body = z.infer<typeof loginSchema>;
 
@@ -42,6 +43,14 @@ const login = typedHandler<unknown, Body>(async (req, res) => {
     ipAddress: req.ip,
     userAgent: req.headers["user-agent"],
     expiresInHours: env.REFRESH_TOKEN_EXPIRY_HOURS,
+  });
+
+  audit({
+    event: "identity.login",
+    actorId: identity.id,
+    ip: req.ip,
+    requestId: req.id,
+    userAgent: req.headers["user-agent"],
   });
 
   res.json({

@@ -1,4 +1,4 @@
-import type { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
 
 type TypedHandler<TParams = unknown, TBody = unknown, TQuery = unknown> = (
   req: Request<TParams, unknown, TBody, TQuery>,

@@ -1,7 +1,7 @@
 import { countIdentities, listIdentities } from "@g4/db-iam";
 import type { listIdentitiesQuerySchema } from "@g4/schemas/iam";
-import { typedHandler } from "../../../utils/typedHandler";
 import type { z } from "zod";
+import { typedHandler } from "../../../utils/typedHandler";
 
 type Query = z.infer<typeof listIdentitiesQuerySchema>;
 

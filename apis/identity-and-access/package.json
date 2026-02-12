@@ -6,6 +6,7 @@
   "license": "MIT",
   "dependencies": {
     "@g4/bcrypt": "*",
+    "@g4/logger": "*",
     "@g4/db-iam": "*",
     "@g4/error-handler": "*",
     "@g4/schemas": "*",
