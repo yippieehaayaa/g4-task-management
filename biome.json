@@ -14,7 +14,8 @@
       "!**/prisma",
       "!**/generated",
       "!**/package.json",
-      "!**/build"
+      "!**/build",
+      "!**/.turbo"
     ]
   },
   "formatter": {
@@ -33,7 +34,8 @@
       "!**/node_modules/",
       "!**/prisma/",
       "!**/generated/",
-      "!**/build/"
+      "!**/build/",
+      "!**/.turbo/"
     ]
   },
   "assist": {

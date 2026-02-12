@@ -19,8 +19,9 @@
     }
   },
   "prisma": {
-    "schema": "prisma/schema"
-  },
+  "schema": "prisma/schema",
+  "seed": "npx tsx prisma/seed/index.ts"
+},
   "scripts": {
     "db:generate": "prisma generate",
     "db:build": "prisma generate && tsup src",
@@ -36,6 +37,8 @@
     "typescript": "5.9.2"
   },
   "dependencies": {
-    "@prisma/client": "^6.19.2"
+    "@g4/bcrypt": "*",
+    "@prisma/client": "^6.19.2",
+    "tsx": "^4.21.0"
   }
 }
