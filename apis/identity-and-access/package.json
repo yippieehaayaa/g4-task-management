@@ -5,6 +5,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "dependencies": {
+    "@g4/validate": "*",
     "@g4/error-handler": "*",
     "@g4/bcrypt": "*",
     "@g4/db-iam": "*",
