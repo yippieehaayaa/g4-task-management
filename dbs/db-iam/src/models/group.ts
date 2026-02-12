@@ -10,6 +10,46 @@ type UpdateGroupInput = {
   description?: string;
 };
 
+type ListGroupsInput = {
+  page: number;
+  limit: number;
+  search?: string;
+};
+
+const listGroups = async (input: ListGroupsInput) => {
+  const where = {
+    deletedAt: null,
+    ...(input.search && {
+      name: { contains: input.search, mode: "insensitive" as const },
+    }),
+  };
+
+  return await prisma.group.findMany({
+    where,
+    include: {
+      roles: { where: { deletedAt: null } },
+      identities: {
+        where: { deletedAt: null },
+        select: { id: true, username: true, email: true },
+      },
+    },
+    skip: (input.page - 1) * input.limit,
+    take: input.limit,
+    orderBy: { createdAt: "desc" },
+  });
+};
+
+const countGroups = async (search?: string) => {
+  return await prisma.group.count({
+    where: {
+      deletedAt: null,
+      ...(search && {
+        name: { contains: search, mode: "insensitive" as const },
+      }),
+    },
+  });
+};
+
 const createGroup = async (input: CreateGroupInput) => {
   return await prisma.group.create({ data: input });
 };
@@ -83,6 +123,8 @@ const removeRolesFromGroup = async (groupId: string, roleIds: string[]) => {
 };
 
 export {
+  listGroups,
+  countGroups,
   createGroup,
   findGroupById,
   findGroupByName,

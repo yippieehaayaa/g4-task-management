@@ -10,6 +10,40 @@ type UpdateRoleInput = {
   description?: string;
 };
 
+type ListRolesInput = {
+  page: number;
+  limit: number;
+  search?: string;
+};
+
+const listRoles = async (input: ListRolesInput) => {
+  const where = {
+    deletedAt: null,
+    ...(input.search && {
+      name: { contains: input.search, mode: "insensitive" as const },
+    }),
+  };
+
+  return await prisma.role.findMany({
+    where,
+    include: { policies: { where: { deletedAt: null } } },
+    skip: (input.page - 1) * input.limit,
+    take: input.limit,
+    orderBy: { createdAt: "desc" },
+  });
+};
+
+const countRoles = async (search?: string) => {
+  return await prisma.role.count({
+    where: {
+      deletedAt: null,
+      ...(search && {
+        name: { contains: search, mode: "insensitive" as const },
+      }),
+    },
+  });
+};
+
 const createRole = async (input: CreateRoleInput) => {
   return await prisma.role.create({ data: input });
 };
@@ -82,6 +116,8 @@ const removeRoleFromIdentity = async (identityId: string, roleId: string) => {
 };
 
 export {
+  listRoles,
+  countRoles,
   createRole,
   findRoleById,
   findRoleByName,

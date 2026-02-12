@@ -1,5 +1,10 @@
 import { encryptPassword, verifyPassword } from "@g4/bcrypt";
-import { type IdentityKind, type IdentityStatus, prisma } from "../client";
+import {
+  type IdentityKind,
+  type IdentityStatus,
+  type Prisma,
+  prisma,
+} from "../client";
 
 type CreateIdentityInput = {
   username: string;
@@ -26,6 +31,69 @@ type ChangeEmailInput = {
   identityId: string;
   newEmail: string;
   ipAddress?: string;
+};
+
+type UpdateIdentityInput = {
+  status?: IdentityStatus;
+  kind?: IdentityKind;
+  active?: boolean;
+};
+
+type ListIdentitiesInput = {
+  page: number;
+  limit: number;
+  search?: string;
+  status?: IdentityStatus;
+  kind?: IdentityKind;
+};
+
+const IDENTITY_PUBLIC_SELECT = {
+  id: true,
+  username: true,
+  email: true,
+  changePassword: true,
+  active: true,
+  kind: true,
+  status: true,
+  createdAt: true,
+  updatedAt: true,
+  deletedAt: true,
+  roleIds: true,
+  groupIds: true,
+} satisfies Prisma.IdentitySelect;
+
+const buildIdentityWhere = (
+  input: Pick<ListIdentitiesInput, "search" | "status" | "kind">,
+): Prisma.IdentityWhereInput => ({
+  deletedAt: null,
+  ...(input.status && { status: input.status }),
+  ...(input.kind && { kind: input.kind }),
+  ...(input.search && {
+    OR: [
+      { username: { contains: input.search, mode: "insensitive" } },
+      { email: { contains: input.search, mode: "insensitive" } },
+    ],
+  }),
+});
+
+const listIdentities = async (input: ListIdentitiesInput) => {
+  const where = buildIdentityWhere(input);
+
+  return await prisma.identity.findMany({
+    where,
+    select: IDENTITY_PUBLIC_SELECT,
+    skip: (input.page - 1) * input.limit,
+    take: input.limit,
+    orderBy: { createdAt: "desc" },
+  });
+};
+
+const countIdentities = async (
+  input: Pick<ListIdentitiesInput, "search" | "status" | "kind">,
+) => {
+  return await prisma.identity.count({
+    where: buildIdentityWhere(input),
+  });
 };
 
 const createIdentity = async (input: CreateIdentityInput) => {
@@ -78,9 +146,28 @@ const findIdentityById = async (id: string) => {
   });
 };
 
+const findPublicIdentityById = async (id: string) => {
+  return await prisma.identity.findUnique({
+    where: { id, deletedAt: null },
+    select: {
+      ...IDENTITY_PUBLIC_SELECT,
+      roles: { where: { deletedAt: null } },
+      groups: { where: { deletedAt: null } },
+    },
+  });
+};
+
 const findIdentityByUsername = async (username: string) => {
   return await prisma.identity.findUnique({
     where: { username, deletedAt: null },
+  });
+};
+
+const updateIdentity = async (id: string, input: UpdateIdentityInput) => {
+  return await prisma.identity.update({
+    where: { id, deletedAt: null },
+    data: input,
+    select: IDENTITY_PUBLIC_SELECT,
   });
 };
 
@@ -175,10 +262,15 @@ const trackIpAddress = async (
 };
 
 export {
+  IDENTITY_PUBLIC_SELECT,
   createIdentity,
   verifyIdentity,
   findIdentityById,
+  findPublicIdentityById,
   findIdentityByUsername,
+  listIdentities,
+  countIdentities,
+  updateIdentity,
   changePassword,
   changeEmail,
   updateIdentityStatus,

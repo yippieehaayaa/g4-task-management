@@ -16,6 +16,39 @@ type UpdatePolicyInput = {
   resources?: string[];
 };
 
+type ListPoliciesInput = {
+  page: number;
+  limit: number;
+  search?: string;
+};
+
+const listPolicies = async (input: ListPoliciesInput) => {
+  const where = {
+    deletedAt: null,
+    ...(input.search && {
+      name: { contains: input.search, mode: "insensitive" as const },
+    }),
+  };
+
+  return await prisma.policy.findMany({
+    where,
+    skip: (input.page - 1) * input.limit,
+    take: input.limit,
+    orderBy: { createdAt: "desc" },
+  });
+};
+
+const countPolicies = async (search?: string) => {
+  return await prisma.policy.count({
+    where: {
+      deletedAt: null,
+      ...(search && {
+        name: { contains: search, mode: "insensitive" as const },
+      }),
+    },
+  });
+};
+
 const createPolicy = async (input: CreatePolicyInput) => {
   return await prisma.policy.create({ data: input });
 };
@@ -47,6 +80,8 @@ const softDeletePolicy = async (id: string) => {
 };
 
 export {
+  listPolicies,
+  countPolicies,
   createPolicy,
   findPolicyById,
   findPolicyByName,

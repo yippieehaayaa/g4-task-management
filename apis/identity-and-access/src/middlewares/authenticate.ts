@@ -14,10 +14,8 @@ const authenticate = async (
     throw new UnauthorizedError("Missing or malformed authorization header");
   }
 
-  const token = header.slice(7);
-
   try {
-    const payload = await verifyAccessToken(token);
+    const payload = await verifyAccessToken(header.replace("Bearer ", ""));
     const identity = await findIdentityById(payload.sub);
 
     if (!identity || !identity.active || identity.deletedAt) {

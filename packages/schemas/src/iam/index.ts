@@ -1,4 +1,5 @@
 export * from "./schemas/account";
+export * from "./schemas/common";
 export * from "./schemas/enums";
 export * from "./schemas/group";
 export * from "./schemas/otp";

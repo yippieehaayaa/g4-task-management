@@ -13,4 +13,8 @@ const refreshTokenSchema = z.object({
   identityId: z.string().min(1),
 });
 
-export { createSessionSchema, refreshTokenSchema };
+const refreshTokenBodySchema = z.object({
+  refreshToken: z.string().min(1),
+});
+
+export { createSessionSchema, refreshTokenSchema, refreshTokenBodySchema };

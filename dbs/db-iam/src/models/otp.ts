@@ -96,6 +96,23 @@ const findPendingOtp = async (identityId: string, purpose: OtpPurpose) => {
   });
 };
 
+const listOtpsByIdentity = async (identityId: string) => {
+  return await prisma.otp.findMany({
+    where: { identityId },
+    orderBy: { sentAt: "desc" },
+    select: {
+      id: true,
+      purpose: true,
+      status: true,
+      attempts: true,
+      sentAt: true,
+      expiresAt: true,
+      verifiedAt: true,
+      identityId: true,
+    },
+  });
+};
+
 const expireOtpsByIdentity = async (identityId: string) => {
   return await prisma.otp.updateMany({
     where: { identityId, status: "PENDING" },
@@ -103,4 +120,10 @@ const expireOtpsByIdentity = async (identityId: string) => {
   });
 };
 
-export { createOtp, verifyOtp, findPendingOtp, expireOtpsByIdentity };
+export {
+  createOtp,
+  verifyOtp,
+  findPendingOtp,
+  listOtpsByIdentity,
+  expireOtpsByIdentity,
+};
