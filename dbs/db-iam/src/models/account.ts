@@ -124,6 +124,7 @@ const createIdentity = async (input: CreateIdentityInput) => {
   });
 };
 
+const PASSWORD_HISTORY_DEPTH = 5;
 const MAX_FAILED_ATTEMPTS = 5;
 
 const getLockDuration = (attempts: number): number => {
@@ -224,7 +225,7 @@ const updateIdentity = async (id: string, input: UpdateIdentityInput) => {
 const changePassword = async (input: ChangePasswordInput) => {
   return await prisma.$transaction(async (tx) => {
     const identity = await tx.identity.findUnique({
-      where: { id: input.identityId, deletedAt: null },
+      where: { id: input.identityId, active: true, deletedAt: null },
     });
 
     if (!identity) {
@@ -237,6 +238,31 @@ const changePassword = async (input: ChangePasswordInput) => {
       throw new Error("Invalid current password");
     }
 
+    if (input.currentPassword === input.newPassword) {
+      throw new Error("Password does not meet requirements");
+    }
+
+    const history = await tx.passwordHistory.findMany({
+      where: { identityId: identity.id },
+      orderBy: { changedAt: "desc" },
+      take: PASSWORD_HISTORY_DEPTH - 1,
+    });
+
+    const allPreviousHashes = [
+      identity.hash,
+      ...history.map((h) => h.password),
+    ];
+
+    const results = await Promise.all(
+      allPreviousHashes.map((oldHash) =>
+        verifyPassword(input.newPassword, oldHash),
+      ),
+    );
+
+    if (results.some(Boolean)) {
+      throw new Error("Password does not meet requirements");
+    }
+
     const { salt, hash } = await encryptPassword(input.newPassword);
 
     await tx.passwordHistory.create({
@@ -246,6 +272,19 @@ const changePassword = async (input: ChangePasswordInput) => {
         identityId: identity.id,
       },
     });
+
+    const staleEntries = await tx.passwordHistory.findMany({
+      where: { identityId: identity.id },
+      orderBy: { changedAt: "desc" },
+      skip: PASSWORD_HISTORY_DEPTH,
+      select: { id: true },
+    });
+
+    if (staleEntries.length > 0) {
+      await tx.passwordHistory.deleteMany({
+        where: { id: { in: staleEntries.map((e) => e.id) } },
+      });
+    }
 
     return await tx.identity.update({
       where: { id: identity.id },

@@ -21,16 +21,24 @@ const verifyIdentitySchema = z.object({
   userAgent: z.string().optional(),
 });
 
+const passwordSchema = z
+  .string()
+  .min(8)
+  .regex(/[a-z]/, "Must contain at least one lowercase letter")
+  .regex(/[A-Z]/, "Must contain at least one uppercase letter")
+  .regex(/[0-9]/, "Must contain at least one digit")
+  .regex(/[^a-zA-Z0-9]/, "Must contain at least one special character");
+
 const changePasswordSchema = z.object({
   identityId: z.string().min(1),
   currentPassword: z.string().min(1),
-  newPassword: z.string().min(8),
+  newPassword: passwordSchema,
   ipAddress: z.string().optional(),
 });
 
 const changePasswordBodySchema = z.object({
   currentPassword: z.string().min(1),
-  newPassword: z.string().min(8),
+  newPassword: passwordSchema,
 });
 
 const changeEmailSchema = z.object({
