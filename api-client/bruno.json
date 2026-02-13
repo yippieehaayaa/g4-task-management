@@ -1,0 +1,6 @@
+{
+  "version": "1",
+  "name": "g4-task-management",
+  "type": "collection",
+  "ignore": ["node_modules", ".git"]
+}

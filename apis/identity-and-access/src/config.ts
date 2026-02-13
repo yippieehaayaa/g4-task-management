@@ -15,6 +15,7 @@ const envSchema = z.object({
   REFRESH_TOKEN_EXPIRY_HOURS: z.coerce.number().int().positive().default(168),
   JWT_PRIVATE_KEY_PATH: z.string().optional(),
   JWT_PUBLIC_KEY_PATH: z.string().optional(),
+  HASH_SECRET: z.string().min(1),
 });
 
 const env = envSchema.parse({
@@ -27,6 +28,7 @@ const env = envSchema.parse({
   REFRESH_TOKEN_EXPIRY_HOURS: process.env.REFRESH_TOKEN_EXPIRY_HOURS,
   JWT_PRIVATE_KEY_PATH: process.env.JWT_PRIVATE_KEY_PATH,
   JWT_PUBLIC_KEY_PATH: process.env.JWT_PUBLIC_KEY_PATH,
+  HASH_SECRET: process.env.HASH_SECRET,
 });
 
 export { env };

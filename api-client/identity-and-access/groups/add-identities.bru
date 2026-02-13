@@ -1,0 +1,21 @@
+meta {
+  name: Add Identities to Group
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/groups/{{groupId}}/identities
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "identityIds": ["{{identityId}}"]
+  }
+}

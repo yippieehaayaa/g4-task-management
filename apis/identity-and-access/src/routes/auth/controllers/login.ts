@@ -24,6 +24,7 @@ const login = typedHandler<unknown, Body>(async (req, res) => {
       userAgent: req.headers["user-agent"],
     });
   } catch (error) {
+    console.error("Login error:", error);
     if (
       error instanceof Error &&
       error.message === "Account temporarily locked"

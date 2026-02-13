@@ -1,0 +1,21 @@
+meta {
+  name: Remove Roles from Group
+  type: http
+  seq: 9
+}
+
+delete {
+  url: {{baseUrl}}/groups/{{groupId}}/roles
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "roleIds": ["{{roleId}}"]
+  }
+}

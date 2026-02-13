@@ -1,0 +1,23 @@
+meta {
+  name: Login
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "username": "superadmin",
+    "password": "Admin@1234"
+  }
+}
+
+script:post-response {
+  bru.setEnvVar("accessToken", res.body.data.accessToken);
+  bru.setEnvVar("refreshToken", res.body.data.refreshToken);
+}

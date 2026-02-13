@@ -79,7 +79,7 @@ const IDENTITY_AUTH_SELECT = {
 const buildIdentityWhere = (
   input: Pick<ListIdentitiesInput, "search" | "status" | "kind">,
 ): Prisma.IdentityWhereInput => ({
-  deletedAt: null,
+  active: true,
   ...(input.status && { status: input.status }),
   ...(input.kind && { kind: input.kind }),
   ...(input.search && {
@@ -137,7 +137,7 @@ const getLockDuration = (attempts: number): number => {
 const verifyIdentity = async (input: VerifyIdentityInput) => {
   return await prisma.$transaction(async (tx) => {
     const identity = await tx.identity.findUnique({
-      where: { username: input.username, active: true, deletedAt: null },
+      where: { username: input.username, active: true },
     });
 
     if (!identity) {
@@ -191,32 +191,58 @@ const verifyIdentity = async (input: VerifyIdentityInput) => {
 };
 
 const findIdentityById = async (id: string) => {
-  return await prisma.identity.findUnique({
-    where: { id, deletedAt: null },
+  const identity = await prisma.identity.findUnique({
+    where: { id },
     select: IDENTITY_AUTH_SELECT,
   });
+  if (!identity || !identity.active) return null;
+  return identity;
 };
 
 const findPublicIdentityById = async (id: string) => {
-  return await prisma.identity.findUnique({
-    where: { id, deletedAt: null },
+  const identity = await prisma.identity.findUnique({
+    where: { id },
     select: {
       ...IDENTITY_PUBLIC_SELECT,
-      roles: { where: { deletedAt: null } },
-      groups: { where: { deletedAt: null } },
+      roles: {
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          deletedAt: true,
+        },
+      },
+      groups: {
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          deletedAt: true,
+        },
+      },
     },
   });
+  if (!identity || !identity.active) return null;
+  const activeRoles = identity.roles.filter((r) => !r.deletedAt);
+  const activeGroups = identity.groups.filter((g) => !g.deletedAt);
+  return {
+    ...identity,
+    roles: activeRoles,
+    groups: activeGroups,
+  };
 };
 
 const findIdentityByUsername = async (username: string) => {
-  return await prisma.identity.findUnique({
-    where: { username, deletedAt: null },
+  const identity = await prisma.identity.findUnique({
+    where: { username },
   });
+  if (!identity || !identity.active) return null;
+  return identity;
 };
 
 const updateIdentity = async (id: string, input: UpdateIdentityInput) => {
   return await prisma.identity.update({
-    where: { id, deletedAt: null },
+    where: { id, active: true },
     data: input,
     select: IDENTITY_PUBLIC_SELECT,
   });
@@ -225,7 +251,7 @@ const updateIdentity = async (id: string, input: UpdateIdentityInput) => {
 const changePassword = async (input: ChangePasswordInput) => {
   return await prisma.$transaction(async (tx) => {
     const identity = await tx.identity.findUnique({
-      where: { id: input.identityId, active: true, deletedAt: null },
+      where: { id: input.identityId, active: true },
     });
 
     if (!identity) {
@@ -296,7 +322,7 @@ const changePassword = async (input: ChangePasswordInput) => {
 const changeEmail = async (input: ChangeEmailInput) => {
   return await prisma.$transaction(async (tx) => {
     const identity = await tx.identity.findUnique({
-      where: { id: input.identityId, deletedAt: null },
+      where: { id: input.identityId, active: true },
     });
 
     if (!identity) {
@@ -321,14 +347,14 @@ const changeEmail = async (input: ChangeEmailInput) => {
 
 const updateIdentityStatus = async (id: string, status: IdentityStatus) => {
   return await prisma.identity.update({
-    where: { id, deletedAt: null },
+    where: { id },
     data: { status },
   });
 };
 
 const deactivateIdentity = async (id: string) => {
   return await prisma.identity.update({
-    where: { id, deletedAt: null },
+    where: { id },
     data: { active: false },
   });
 };
@@ -342,7 +368,7 @@ const softDeleteIdentity = async (id: string) => {
 
 const unlockIdentity = async (id: string) => {
   return await prisma.identity.update({
-    where: { id, deletedAt: null },
+    where: { id },
     data: { failedLoginAttempts: 0, lockedUntil: null },
   });
 };

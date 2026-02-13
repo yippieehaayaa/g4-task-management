@@ -1,0 +1,15 @@
+meta {
+  name: List OTPs (Admin)
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/admin/identities/{{identityId}}/otps
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}

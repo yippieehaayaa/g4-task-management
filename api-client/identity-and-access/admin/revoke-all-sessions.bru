@@ -1,0 +1,15 @@
+meta {
+  name: Revoke All Sessions (Admin)
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{baseUrl}}/admin/identities/{{identityId}}/sessions
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}

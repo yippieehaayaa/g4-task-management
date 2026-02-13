@@ -1,0 +1,22 @@
+meta {
+  name: Update Identity
+  type: http
+  seq: 3
+}
+
+patch {
+  url: {{baseUrl}}/identities/{{identityId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "status": "ACTIVE",
+    "kind": "USER"
+  }
+}

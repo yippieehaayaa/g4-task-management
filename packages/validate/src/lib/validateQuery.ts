@@ -10,7 +10,7 @@ const validateQuery = (schema: z.ZodType): RequestHandler => {
       throw new BadRequestError("Invalid query", result.error.issues);
     }
 
-    req.query = result.data as typeof req.query;
+    (req as { validatedQuery?: unknown }).validatedQuery = result.data;
     next();
   };
 };

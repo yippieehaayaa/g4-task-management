@@ -1,0 +1,21 @@
+meta {
+  name: Assign Identity to Role
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{baseUrl}}/roles/{{roleId}}/identities
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "identityId": "{{identityId}}"
+  }
+}
