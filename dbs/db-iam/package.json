@@ -38,6 +38,7 @@
   },
   "dependencies": {
     "@g4/bcrypt": "*",
+    "@g4/crypto": "*",
     "@prisma/client": "^6.19.2",
     "tsx": "^4.21.0"
   }

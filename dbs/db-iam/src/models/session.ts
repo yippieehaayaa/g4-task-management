@@ -1,3 +1,4 @@
+import { hmac } from "@g4/crypto";
 import { type Prisma, prisma } from "../client";
 
 type CreateSessionInput = {
@@ -24,7 +25,7 @@ const createSession = async (input: CreateSessionInput) => {
 
   return await prisma.session.create({
     data: {
-      token: input.token,
+      token: hmac(input.token),
       ipAddress: input.ipAddress,
       userAgent: input.userAgent,
       expiresAt,
@@ -36,7 +37,7 @@ const createSession = async (input: CreateSessionInput) => {
 const findSessionByToken = async (token: string, identityId: string) => {
   return await prisma.session.findUnique({
     where: {
-      token,
+      token: hmac(token),
       identityId,
       revokedAt: null,
       expiresAt: { gt: new Date() },
@@ -47,7 +48,7 @@ const findSessionByToken = async (token: string, identityId: string) => {
 const findActiveSessionByToken = async (token: string) => {
   return await prisma.session.findUnique({
     where: {
-      token,
+      token: hmac(token),
       revokedAt: null,
       expiresAt: { gt: new Date() },
     },
@@ -75,7 +76,7 @@ const listSessionsByIdentity = async (identityId: string) => {
 
 const revokeSession = async (token: string, identityId: string) => {
   return await prisma.session.update({
-    where: { token, identityId },
+    where: { token: hmac(token), identityId },
     data: { revokedAt: new Date() },
   });
 };

@@ -1,3 +1,4 @@
+import { hmac, verifyHmac } from "@g4/crypto";
 import { type OtpPurpose, prisma } from "../client";
 
 type CreateOtpInput = {
@@ -30,7 +31,7 @@ const createOtp = async (input: CreateOtpInput) => {
 
   return await prisma.otp.create({
     data: {
-      code: input.code,
+      code: hmac(input.code),
       purpose: input.purpose,
       expiresAt,
       identityId: input.identityId,
@@ -69,7 +70,7 @@ const verifyOtp = async (input: VerifyOtpInput) => {
       throw new Error("Maximum attempts exceeded");
     }
 
-    if (otp.code !== input.code) {
+    if (!verifyHmac(input.code, otp.code)) {
       await tx.otp.update({
         where: { id: otp.id },
         data: { attempts: { increment: 1 } },
