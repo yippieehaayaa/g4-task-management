@@ -279,10 +279,7 @@ const changePassword = async (input: ChangePasswordInput) => {
     take: PASSWORD_HISTORY_DEPTH - 1,
   });
 
-  const allPreviousHashes = [
-    identity.hash,
-    ...history.map((h) => h.password),
-  ];
+  const allPreviousHashes = [identity.hash, ...history.map((h) => h.password)];
 
   const results = await Promise.all(
     allPreviousHashes.map((oldHash) =>
