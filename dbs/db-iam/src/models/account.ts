@@ -124,6 +124,15 @@ const createIdentity = async (input: CreateIdentityInput) => {
   });
 };
 
+const MAX_FAILED_ATTEMPTS = 5;
+
+const getLockDuration = (attempts: number): number => {
+  if (attempts >= 20) return 24 * 60;
+  if (attempts >= 15) return 60;
+  if (attempts >= 10) return 15;
+  return 5;
+};
+
 const verifyIdentity = async (input: VerifyIdentityInput) => {
   return await prisma.$transaction(async (tx) => {
     const identity = await tx.identity.findUnique({
@@ -134,10 +143,36 @@ const verifyIdentity = async (input: VerifyIdentityInput) => {
       throw new Error("Invalid credentials");
     }
 
+    if (identity.lockedUntil && identity.lockedUntil > new Date()) {
+      throw new Error("Account temporarily locked");
+    }
+
     const valid = await verifyPassword(input.password, identity.hash);
 
     if (!valid) {
+      const attempts = identity.failedLoginAttempts + 1;
+      const data: { failedLoginAttempts: number; lockedUntil?: Date } = {
+        failedLoginAttempts: attempts,
+      };
+
+      if (attempts >= MAX_FAILED_ATTEMPTS) {
+        const lockMinutes = getLockDuration(attempts);
+        data.lockedUntil = new Date(Date.now() + lockMinutes * 60 * 1000);
+      }
+
+      await tx.identity.update({
+        where: { id: identity.id },
+        data,
+      });
+
       throw new Error("Invalid credentials");
+    }
+
+    if (identity.failedLoginAttempts > 0 || identity.lockedUntil) {
+      await tx.identity.update({
+        where: { id: identity.id },
+        data: { failedLoginAttempts: 0, lockedUntil: null },
+      });
     }
 
     if (input.ipAddress) {
@@ -266,6 +301,13 @@ const softDeleteIdentity = async (id: string) => {
   });
 };
 
+const unlockIdentity = async (id: string) => {
+  return await prisma.identity.update({
+    where: { id, deletedAt: null },
+    data: { failedLoginAttempts: 0, lockedUntil: null },
+  });
+};
+
 const trackIpAddress = async (
   identityId: string,
   address: string,
@@ -292,6 +334,7 @@ export {
   changeEmail,
   updateIdentityStatus,
   deactivateIdentity,
+  unlockIdentity,
   softDeleteIdentity,
   trackIpAddress,
 };

@@ -36,18 +36,18 @@ router.patch(
   update,
 );
 
-router.post(
-  "/:id/deactivate",
-  authorize("iam:identities:write"),
-  validateParams(objectIdParamSchema),
-  deactivate,
-);
-
 router.delete(
   "/:id",
   authorize("iam:identities:delete"),
   validateParams(objectIdParamSchema),
   remove,
+);
+
+router.post(
+  "/:id/deactivate",
+  authorize("iam:identities:write"),
+  validateParams(objectIdParamSchema),
+  deactivate,
 );
 
 export default router;

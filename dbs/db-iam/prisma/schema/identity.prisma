@@ -1,13 +1,15 @@
 model Identity {
-    id             String         @id @default(auto()) @map("_id") @db.ObjectId
-    username       String         @unique
-    email          String?        @unique
-    hash           String
-    salt           String
-    changePassword Boolean        @default(true)
-    active         Boolean        @default(true)
-    kind           IdentityKind   @default(USER)
-    status         IdentityStatus @default(PENDING_VERIFICATION)
+    id                  String         @id @default(auto()) @map("_id") @db.ObjectId
+    username            String         @unique
+    email               String?        @unique
+    hash                String
+    salt                String
+    failedLoginAttempts Int            @default(0)
+    lockedUntil         DateTime?
+    changePassword      Boolean        @default(true)
+    active              Boolean        @default(true)
+    kind                IdentityKind   @default(USER)
+    status              IdentityStatus @default(PENDING_VERIFICATION)
 
     // Timestamps
     createdAt DateTime  @default(now())

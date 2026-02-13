@@ -2,6 +2,7 @@ import { validateParams } from "@g4/validate";
 import { Router } from "express";
 import { z } from "zod";
 import { authorize } from "../../middlewares/authorize";
+import { unlock } from "./controllers/identities";
 import { expireOtps, listOtps } from "./controllers/otps";
 import {
   listSessions,
@@ -19,6 +20,13 @@ const sessionParamsSchema = z.object({
   identityId: z.string().regex(/^[a-f\d]{24}$/i, "Invalid identity ID"),
   sessionId: z.string().regex(/^[a-f\d]{24}$/i, "Invalid session ID"),
 });
+
+router.post(
+  "/identities/:identityId/unlock",
+  authorize("iam:identities:write"),
+  validateParams(identityIdParamSchema),
+  unlock,
+);
 
 router.get(
   "/identities/:identityId/sessions",

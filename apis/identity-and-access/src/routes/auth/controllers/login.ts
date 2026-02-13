@@ -1,5 +1,5 @@
 import { createSession, verifyIdentity } from "@g4/db-iam";
-import { ForbiddenError } from "@g4/error-handler";
+import { ForbiddenError, TooManyRequestsError } from "@g4/error-handler";
 import type { loginSchema } from "@g4/schemas/iam";
 import type { z } from "zod";
 import { env } from "../../../config";
@@ -14,12 +14,41 @@ import { typedHandler } from "../../../utils/typedHandler";
 type Body = z.infer<typeof loginSchema>;
 
 const login = typedHandler<unknown, Body>(async (req, res) => {
-  const identity = await verifyIdentity({
-    username: req.body.username,
-    password: req.body.password,
-    ipAddress: req.ip,
-    userAgent: req.headers["user-agent"],
-  });
+  let identity: Awaited<ReturnType<typeof verifyIdentity>>;
+
+  try {
+    identity = await verifyIdentity({
+      username: req.body.username,
+      password: req.body.password,
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"],
+    });
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      error.message === "Account temporarily locked"
+    ) {
+      audit({
+        event: "identity.login.failed",
+        ip: req.ip,
+        requestId: req.id,
+        userAgent: req.headers["user-agent"],
+        metadata: { username: req.body.username, reason: "account_locked" },
+      });
+
+      throw new TooManyRequestsError("Account temporarily locked");
+    }
+
+    audit({
+      event: "identity.login.failed",
+      ip: req.ip,
+      requestId: req.id,
+      userAgent: req.headers["user-agent"],
+      metadata: { username: req.body.username, reason: "invalid_credentials" },
+    });
+
+    throw new ForbiddenError("Invalid credentials");
+  }
 
   if (identity.status === "SUSPENDED" || identity.status === "INACTIVE") {
     throw new ForbiddenError("Account is not active");

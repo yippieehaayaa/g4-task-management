@@ -11,6 +11,7 @@ type AuditEvent =
   | "identity.email.changed"
   | "identity.deactivated"
   | "identity.deleted"
+  | "identity.unlocked"
   | "session.revoked"
   | "session.revoked.all"
   | "otp.expired.all";
