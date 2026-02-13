@@ -135,58 +135,64 @@ const getLockDuration = (attempts: number): number => {
 };
 
 const verifyIdentity = async (input: VerifyIdentityInput) => {
-  return await prisma.$transaction(async (tx) => {
-    const identity = await tx.identity.findUnique({
+  const identity = await prisma.$transaction(async (tx) => {
+    const found = await tx.identity.findUnique({
       where: { username: input.username, active: true },
     });
 
-    if (!identity) {
+    if (!found) {
       throw new Error("Invalid credentials");
     }
 
-    if (identity.lockedUntil && identity.lockedUntil > new Date()) {
+    if (found.lockedUntil && found.lockedUntil > new Date()) {
       throw new Error("Account temporarily locked");
     }
 
-    const valid = await verifyPassword(input.password, identity.hash);
+    await tx.identity.update({
+      where: { id: found.id },
+      data: { failedLoginAttempts: { increment: 1 } },
+    });
 
-    if (!valid) {
-      const attempts = identity.failedLoginAttempts + 1;
-      const data: { failedLoginAttempts: number; lockedUntil?: Date } = {
-        failedLoginAttempts: attempts,
-      };
+    return found;
+  });
 
-      if (attempts >= MAX_FAILED_ATTEMPTS) {
-        const lockMinutes = getLockDuration(attempts);
-        data.lockedUntil = new Date(Date.now() + lockMinutes * 60 * 1000);
-      }
+  const valid = await verifyPassword(input.password, identity.hash);
 
-      await tx.identity.update({
-        where: { id: identity.id },
-        data,
-      });
-
-      throw new Error("Invalid credentials");
-    }
-
-    if (identity.failedLoginAttempts > 0 || identity.lockedUntil) {
+  return await prisma.$transaction(async (tx) => {
+    if (valid) {
       await tx.identity.update({
         where: { id: identity.id },
         data: { failedLoginAttempts: 0, lockedUntil: null },
       });
+
+      if (input.ipAddress) {
+        await tx.ipAddress.create({
+          data: {
+            address: input.ipAddress,
+            userAgent: input.userAgent,
+            identityId: identity.id,
+          },
+        });
+      }
+
+      return identity;
     }
 
-    if (input.ipAddress) {
-      await tx.ipAddress.create({
+    const current = await tx.identity.findUniqueOrThrow({
+      where: { id: identity.id },
+    });
+
+    if (current.failedLoginAttempts >= MAX_FAILED_ATTEMPTS) {
+      const lockMinutes = getLockDuration(current.failedLoginAttempts);
+      await tx.identity.update({
+        where: { id: identity.id },
         data: {
-          address: input.ipAddress,
-          userAgent: input.userAgent,
-          identityId: identity.id,
+          lockedUntil: new Date(Date.now() + lockMinutes * 60 * 1000),
         },
       });
     }
 
-    return identity;
+    throw new Error("Invalid credentials");
   });
 };
 
@@ -249,48 +255,48 @@ const updateIdentity = async (id: string, input: UpdateIdentityInput) => {
 };
 
 const changePassword = async (input: ChangePasswordInput) => {
+  const identity = await prisma.identity.findUnique({
+    where: { id: input.identityId, active: true },
+  });
+
+  if (!identity) {
+    throw new Error("Identity not found");
+  }
+
+  const valid = await verifyPassword(input.currentPassword, identity.hash);
+
+  if (!valid) {
+    throw new Error("Invalid current password");
+  }
+
+  if (input.currentPassword === input.newPassword) {
+    throw new Error("Password does not meet requirements");
+  }
+
+  const history = await prisma.passwordHistory.findMany({
+    where: { identityId: identity.id },
+    orderBy: { changedAt: "desc" },
+    take: PASSWORD_HISTORY_DEPTH - 1,
+  });
+
+  const allPreviousHashes = [
+    identity.hash,
+    ...history.map((h) => h.password),
+  ];
+
+  const results = await Promise.all(
+    allPreviousHashes.map((oldHash) =>
+      verifyPassword(input.newPassword, oldHash),
+    ),
+  );
+
+  if (results.some(Boolean)) {
+    throw new Error("Password does not meet requirements");
+  }
+
+  const { salt, hash } = await encryptPassword(input.newPassword);
+
   return await prisma.$transaction(async (tx) => {
-    const identity = await tx.identity.findUnique({
-      where: { id: input.identityId, active: true },
-    });
-
-    if (!identity) {
-      throw new Error("Identity not found");
-    }
-
-    const valid = await verifyPassword(input.currentPassword, identity.hash);
-
-    if (!valid) {
-      throw new Error("Invalid current password");
-    }
-
-    if (input.currentPassword === input.newPassword) {
-      throw new Error("Password does not meet requirements");
-    }
-
-    const history = await tx.passwordHistory.findMany({
-      where: { identityId: identity.id },
-      orderBy: { changedAt: "desc" },
-      take: PASSWORD_HISTORY_DEPTH - 1,
-    });
-
-    const allPreviousHashes = [
-      identity.hash,
-      ...history.map((h) => h.password),
-    ];
-
-    const results = await Promise.all(
-      allPreviousHashes.map((oldHash) =>
-        verifyPassword(input.newPassword, oldHash),
-      ),
-    );
-
-    if (results.some(Boolean)) {
-      throw new Error("Password does not meet requirements");
-    }
-
-    const { salt, hash } = await encryptPassword(input.newPassword);
-
     await tx.passwordHistory.create({
       data: {
         password: identity.hash,
