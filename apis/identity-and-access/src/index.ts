@@ -28,7 +28,7 @@ const start = async () => {
   await initializeKeys();
 
   server.listen(env.PORT, () => {
-    log.info({ port: env.PORT }, "IAM service started");
+    log.info({ port: env.PORT }, "IAM Service is listening at port");
   });
 };
 
