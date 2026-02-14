@@ -27,7 +27,7 @@
       "watch": "tsup --watch"
     },
     "dependencies": {
-      "zod": "^4.3.6"
+      "zod": "4.3.6"
     },
     "devDependencies": {
       "@g4/typescript-config": "*",

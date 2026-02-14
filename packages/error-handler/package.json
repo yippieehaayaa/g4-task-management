@@ -20,7 +20,7 @@
       "watch": "tsup src --watch"
     },
     "dependencies": {
-      "express": "^5.2.1"
+      "express": "5.2.1"
     },
     "devDependencies": {
       "@g4/typescript-config": "*",
