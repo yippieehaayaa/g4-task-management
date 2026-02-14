@@ -16,11 +16,14 @@ const typedHandler =
   <TParams = unknown, TBody = unknown, TQuery = unknown>(
     handler: TypedHandler<TParams, TBody, TQuery>,
   ) =>
-  (req: Request, res: Response, next: NextFunction) =>
-    handler(
-      req,
-      res as Response<unknown, TypedLocals<TParams, TBody, TQuery>>,
-      next,
-    );
+  (req: Request, res: Response, next: NextFunction) => {
+    Promise.resolve(
+      handler(
+        req,
+        res as Response<unknown, TypedLocals<TParams, TBody, TQuery>>,
+        next,
+      ),
+    ).catch(next);
+  };
 
 export { typedHandler, type TypedHandler };

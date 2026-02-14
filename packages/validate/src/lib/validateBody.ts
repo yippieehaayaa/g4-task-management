@@ -9,9 +9,9 @@ const validateBody = (schema: z.ZodType): RequestHandler => {
       next();
     } catch (error) {
       if (error instanceof ZodError) {
-        throw new BadRequestError("Invalid body", error.issues);
+        return next(new BadRequestError("Invalid body", error.issues));
       }
-      throw error;
+      next(error);
     }
   };
 };

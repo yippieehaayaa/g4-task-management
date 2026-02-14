@@ -9,9 +9,9 @@ const validateQuery = (schema: z.ZodType): RequestHandler => {
       next();
     } catch (error) {
       if (error instanceof ZodError) {
-        throw new BadRequestError("Invalid query", error.issues);
+        return next(new BadRequestError("Invalid query", error.issues));
       }
-      throw error;
+      next(error);
     }
   };
 };

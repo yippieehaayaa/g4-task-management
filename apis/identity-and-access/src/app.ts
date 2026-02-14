@@ -1,4 +1,4 @@
-import { errorHandler } from "@g4/error-handler";
+import { errorHandler, notFoundHandler } from "@g4/error-handler";
 import { logger } from "@g4/logger";
 import cors from "cors";
 import express from "express";
@@ -31,6 +31,7 @@ app.use(apiRateLimiter);
 
 app.use(routes);
 
+app.use(notFoundHandler);
 app.use(errorHandler);
 
 export default app;

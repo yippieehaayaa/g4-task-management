@@ -9,9 +9,9 @@ const validateParams = (schema: z.ZodType): RequestHandler => {
       next();
     } catch (error) {
       if (error instanceof ZodError) {
-        throw new BadRequestError("Invalid params", error.issues);
+        return next(new BadRequestError("Invalid params", error.issues));
       }
-      throw error;
+      next(error);
     }
   };
 };
