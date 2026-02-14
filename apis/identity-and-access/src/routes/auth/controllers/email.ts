@@ -9,7 +9,7 @@ type Body = z.infer<typeof changeEmailBodySchema>;
 const changeEmail = typedHandler<unknown, Body>(async (req, res) => {
   await changeIdentityEmail({
     identityId: req.identity.id,
-    newEmail: req.body.newEmail,
+    newEmail: res.locals.body.newEmail,
     ipAddress: req.ip,
   });
 
@@ -19,7 +19,7 @@ const changeEmail = typedHandler<unknown, Body>(async (req, res) => {
     ip: req.ip,
     requestId: req.id,
     userAgent: req.headers["user-agent"],
-    metadata: { newEmail: req.body.newEmail },
+    metadata: { newEmail: res.locals.body.newEmail },
   });
 
   res.json({ data: { message: "Email changed successfully" } });

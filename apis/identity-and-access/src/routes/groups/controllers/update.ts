@@ -1,9 +1,13 @@
-import { updateGroup } from "@g4/db-iam";
-import type { Request, Response } from "express";
+import { updatePolicy } from "@g4/db-iam";
+import type { updatePolicySchema } from "@g4/schemas/iam";
+import type { z } from "zod";
+import { typedHandler } from "../../../utils/typedHandler";
 
-const update = async (req: Request, res: Response) => {
-  const group = await updateGroup(req.params.id as string, req.body);
-  res.json({ data: group });
-};
+type Body = z.infer<typeof updatePolicySchema>;
+
+const update = typedHandler<{ id: string }, Body>(async (_req, res) => {
+  const policy = await updatePolicy(res.locals.params.id, res.locals.body);
+  res.json({ data: policy });
+});
 
 export { update };

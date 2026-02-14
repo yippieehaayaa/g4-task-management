@@ -5,18 +5,12 @@ import { typedHandler } from "../../../utils/typedHandler";
 
 type Query = z.infer<typeof listIdentitiesQuerySchema>;
 
-const list = typedHandler<unknown, unknown, Query>(async (req, res) => {
-  const { page, limit, search, status, kind } = req.query;
-
-  const input = { page, limit, search, status, kind } as Parameters<
-    typeof listIdentities
-  >[0];
+const list = typedHandler<unknown, unknown, Query>(async (_req, res) => {
+  const { page, limit, search, status, kind } = res.locals.query;
 
   const [data, total] = await Promise.all([
-    listIdentities(input),
-    countIdentities({ search, status, kind } as Parameters<
-      typeof countIdentities
-    >[0]),
+    listIdentities({ page, limit, search, status, kind }),
+    countIdentities({ search, status, kind }),
   ]);
 
   res.json({ data, meta: { page, limit, total } });

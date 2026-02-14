@@ -7,7 +7,7 @@ import { typedHandler } from "../../../utils/typedHandler";
 type Body = z.infer<typeof refreshTokenBodySchema>;
 
 const logout = typedHandler<unknown, Body>(async (req, res) => {
-  await revokeSessionByToken(req.body.refreshToken, req.identity.id);
+  await revokeSessionByToken(res.locals.body.refreshToken, req.identity.id);
 
   audit({
     event: "identity.logout",

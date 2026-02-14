@@ -6,11 +6,11 @@ import { typedHandler } from "../../../utils/typedHandler";
 
 type Body = z.infer<typeof createPolicySchema>;
 
-const create = typedHandler<unknown, Body>(async (req, res) => {
-  const existing = await findPolicyByName(req.body.name);
+const create = typedHandler<unknown, Body>(async (_req, res) => {
+  const existing = await findPolicyByName(res.locals.body.name);
   if (existing) throw new ConflictError("Policy name already exists");
 
-  const policy = await createPolicy(req.body);
+  const policy = await createPolicy(res.locals.body);
   res.status(201).json({ data: policy });
 });
 

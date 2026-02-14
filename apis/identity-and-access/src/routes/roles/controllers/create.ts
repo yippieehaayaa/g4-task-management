@@ -6,11 +6,11 @@ import { typedHandler } from "../../../utils/typedHandler";
 
 type Body = z.infer<typeof createRoleSchema>;
 
-const create = typedHandler<unknown, Body>(async (req, res) => {
-  const existing = await findRoleByName(req.body.name);
+const create = typedHandler<unknown, Body>(async (_req, res) => {
+  const existing = await findRoleByName(res.locals.body.name);
   if (existing) throw new ConflictError("Role name already exists");
 
-  const role = await createRole(req.body);
+  const role = await createRole(res.locals.body);
   res.status(201).json({ data: role });
 });
 

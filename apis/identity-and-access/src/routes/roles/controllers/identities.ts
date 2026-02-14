@@ -3,18 +3,18 @@ import { typedHandler } from "../../../utils/typedHandler";
 
 type Body = { identityId: string };
 
-const assignIdentity = typedHandler<{ id: string }, Body>(async (req, res) => {
+const assignIdentity = typedHandler<{ id: string }, Body>(async (_req, res) => {
   const identity = await assignRoleToIdentity(
-    req.body.identityId,
-    req.params.id,
+    res.locals.body.identityId,
+    res.locals.params.id,
   );
   res.json({ data: identity });
 });
 
-const removeIdentity = typedHandler<{ id: string }, Body>(async (req, res) => {
+const removeIdentity = typedHandler<{ id: string }, Body>(async (_req, res) => {
   const identity = await removeRoleFromIdentity(
-    req.body.identityId,
-    req.params.id,
+    res.locals.body.identityId,
+    res.locals.params.id,
   );
   res.json({ data: identity });
 });

@@ -10,7 +10,7 @@ const listSessions = typedHandler(async (req, res) => {
 
 const revokeSession = typedHandler<{ sessionId: string }>(async (req, res) => {
   try {
-    await revokeSessionById(req.params.sessionId, req.identity.id);
+    await revokeSessionById(res.locals.params.sessionId, req.identity.id);
   } catch {
     throw new NotFoundError("Session not found");
   }
@@ -22,7 +22,7 @@ const revokeSession = typedHandler<{ sessionId: string }>(async (req, res) => {
     ip: req.ip,
     requestId: req.id,
     userAgent: req.headers["user-agent"],
-    metadata: { sessionId: req.params.sessionId },
+    metadata: { sessionId: res.locals.params.sessionId },
   });
 
   res.sendStatus(204);

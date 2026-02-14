@@ -1,17 +1,18 @@
 import { BadRequestError } from "@g4/error-handler";
-import type { RequestHandler } from "express";
-import type { z } from "zod";
+import type { NextFunction, Request, RequestHandler, Response } from "express";
+import { ZodError, type z } from "zod";
 
 const validateQuery = (schema: z.ZodType): RequestHandler => {
-  return (req, _res, next) => {
-    const result = schema.safeParse(req.query);
-
-    if (!result.success) {
-      throw new BadRequestError("Invalid query", result.error.issues);
+  return (req: Request, res: Response, next: NextFunction) => {
+    try {
+      res.locals.query = schema.parse(req.query);
+      next();
+    } catch (error) {
+      if (error instanceof ZodError) {
+        throw new BadRequestError("Invalid query", error.issues);
+      }
+      throw error;
     }
-
-    (req as { validatedQuery?: unknown }).validatedQuery = result.data;
-    next();
   };
 };
 

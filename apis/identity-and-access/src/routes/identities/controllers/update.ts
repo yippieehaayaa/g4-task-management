@@ -5,8 +5,8 @@ import { typedHandler } from "../../../utils/typedHandler";
 
 type Body = z.infer<typeof updateIdentitySchema>;
 
-const update = typedHandler<{ id: string }, Body>(async (req, res) => {
-  const identity = await updateIdentity(req.params.id, req.body);
+const update = typedHandler<{ id: string }, Body>(async (_req, res) => {
+  const identity = await updateIdentity(res.locals.params.id, res.locals.body);
   res.json({ data: identity });
 });
 

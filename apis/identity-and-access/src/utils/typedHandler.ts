@@ -1,8 +1,14 @@
 import type { NextFunction, Request, Response } from "express";
 
+type TypedLocals<TParams, TBody, TQuery> = {
+  params: TParams;
+  body: TBody;
+  query: TQuery;
+};
+
 type TypedHandler<TParams = unknown, TBody = unknown, TQuery = unknown> = (
-  req: Request<TParams, unknown, TBody, TQuery>,
-  res: Response,
+  req: Request,
+  res: Response<unknown, TypedLocals<TParams, TBody, TQuery>>,
   next: NextFunction,
 ) => Promise<void> | void;
 
@@ -12,8 +18,8 @@ const typedHandler =
   ) =>
   (req: Request, res: Response, next: NextFunction) =>
     handler(
-      req as unknown as Request<TParams, unknown, TBody, TQuery>,
-      res,
+      req,
+      res as Response<unknown, TypedLocals<TParams, TBody, TQuery>>,
       next,
     );
 

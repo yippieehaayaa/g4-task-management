@@ -7,15 +7,18 @@ import { NotFoundError } from "@g4/error-handler";
 import { audit } from "../../../utils/audit";
 import { typedHandler } from "../../../utils/typedHandler";
 
-const listSessions = typedHandler<{ identityId: string }>(async (req, res) => {
-  const sessions = await listSessionsByIdentity(req.params.identityId);
+const listSessions = typedHandler<{ identityId: string }>(async (_req, res) => {
+  const sessions = await listSessionsByIdentity(res.locals.params.identityId);
   res.json({ data: sessions });
 });
 
 const revokeSession = typedHandler<{ identityId: string; sessionId: string }>(
   async (req, res) => {
     try {
-      await revokeSessionById(req.params.sessionId, req.params.identityId);
+      await revokeSessionById(
+        res.locals.params.sessionId,
+        res.locals.params.identityId,
+      );
     } catch {
       throw new NotFoundError("Session not found");
     }
@@ -23,11 +26,11 @@ const revokeSession = typedHandler<{ identityId: string; sessionId: string }>(
     audit({
       event: "session.revoked",
       actorId: req.identity.id,
-      targetId: req.params.identityId,
+      targetId: res.locals.params.identityId,
       ip: req.ip,
       requestId: req.id,
       userAgent: req.headers["user-agent"],
-      metadata: { sessionId: req.params.sessionId },
+      metadata: { sessionId: res.locals.params.sessionId },
     });
 
     res.sendStatus(204);
@@ -36,12 +39,12 @@ const revokeSession = typedHandler<{ identityId: string; sessionId: string }>(
 
 const revokeAllSessions = typedHandler<{ identityId: string }>(
   async (req, res) => {
-    await revokeAll(req.params.identityId);
+    await revokeAll(res.locals.params.identityId);
 
     audit({
       event: "session.revoked.all",
       actorId: req.identity.id,
-      targetId: req.params.identityId,
+      targetId: res.locals.params.identityId,
       ip: req.ip,
       requestId: req.id,
       userAgent: req.headers["user-agent"],

@@ -18,8 +18,8 @@ const login = typedHandler<unknown, Body>(async (req, res) => {
 
   try {
     identity = await verifyIdentity({
-      username: req.body.username,
-      password: req.body.password,
+      username: res.locals.body.username,
+      password: res.locals.body.password,
       ipAddress: req.ip,
       userAgent: req.headers["user-agent"],
     });
@@ -34,7 +34,10 @@ const login = typedHandler<unknown, Body>(async (req, res) => {
         ip: req.ip,
         requestId: req.id,
         userAgent: req.headers["user-agent"],
-        metadata: { username: req.body.username, reason: "account_locked" },
+        metadata: {
+          username: res.locals.body.username,
+          reason: "account_locked",
+        },
       });
 
       throw new TooManyRequestsError("Account temporarily locked");
@@ -45,7 +48,10 @@ const login = typedHandler<unknown, Body>(async (req, res) => {
       ip: req.ip,
       requestId: req.id,
       userAgent: req.headers["user-agent"],
-      metadata: { username: req.body.username, reason: "invalid_credentials" },
+      metadata: {
+        username: res.locals.body.username,
+        reason: "invalid_credentials",
+      },
     });
 
     throw new ForbiddenError("Invalid credentials");

@@ -8,10 +8,10 @@ import { typedHandler } from "../../../utils/typedHandler";
 type Body = z.infer<typeof createIdentitySchema>;
 
 const register = typedHandler<unknown, Body>(async (req, res) => {
-  const existing = await findIdentityByUsername(req.body.username);
+  const existing = await findIdentityByUsername(res.locals.body.username);
   if (existing) throw new ConflictError("Username already exists");
 
-  const identity = await createIdentity(req.body);
+  const identity = await createIdentity(res.locals.body);
   const { hash, salt, ...data } = identity;
 
   audit({

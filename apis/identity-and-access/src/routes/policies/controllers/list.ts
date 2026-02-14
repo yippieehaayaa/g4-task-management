@@ -5,8 +5,8 @@ import { typedHandler } from "../../../utils/typedHandler";
 
 type Query = z.infer<typeof paginationQuerySchema>;
 
-const list = typedHandler<unknown, unknown, Query>(async (req, res) => {
-  const { page, limit, search } = req.query;
+const list = typedHandler<unknown, unknown, Query>(async (_req, res) => {
+  const { page, limit, search } = res.locals.query;
 
   const [data, total] = await Promise.all([
     listPolicies({ page, limit, search }),

@@ -5,8 +5,8 @@ import { typedHandler } from "../../../utils/typedHandler";
 
 type Body = z.infer<typeof updatePolicySchema>;
 
-const update = typedHandler<{ id: string }, Body>(async (req, res) => {
-  const policy = await updatePolicy(req.params.id, req.body);
+const update = typedHandler<{ id: string }, Body>(async (_req, res) => {
+  const policy = await updatePolicy(res.locals.params.id, res.locals.body);
   res.json({ data: policy });
 });
 

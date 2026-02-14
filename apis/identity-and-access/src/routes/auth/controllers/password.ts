@@ -12,8 +12,8 @@ type Body = z.infer<typeof changePasswordBodySchema>;
 const changePassword = typedHandler<unknown, Body>(async (req, res) => {
   await changeIdentityPassword({
     identityId: req.identity.id,
-    currentPassword: req.body.currentPassword,
-    newPassword: req.body.newPassword,
+    currentPassword: res.locals.body.currentPassword,
+    newPassword: res.locals.body.newPassword,
     ipAddress: req.ip,
   });
 

@@ -5,8 +5,8 @@ import { typedHandler } from "../../../utils/typedHandler";
 
 type Body = z.infer<typeof updateRoleSchema>;
 
-const update = typedHandler<{ id: string }, Body>(async (req, res) => {
-  const role = await updateRole(req.params.id, req.body);
+const update = typedHandler<{ id: string }, Body>(async (_req, res) => {
+  const role = await updateRole(res.locals.params.id, res.locals.body);
   res.json({ data: role });
 });
 

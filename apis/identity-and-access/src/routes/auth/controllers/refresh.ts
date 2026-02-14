@@ -18,7 +18,7 @@ import { typedHandler } from "../../../utils/typedHandler";
 type Body = z.infer<typeof refreshTokenBodySchema>;
 
 const refresh = typedHandler<unknown, Body>(async (req, res) => {
-  const session = await findActiveSessionByToken(req.body.refreshToken);
+  const session = await findActiveSessionByToken(res.locals.body.refreshToken);
 
   if (!session) {
     throw new UnauthorizedError("Invalid or expired refresh token");

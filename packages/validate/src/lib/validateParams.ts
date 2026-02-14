@@ -1,17 +1,18 @@
 import { BadRequestError } from "@g4/error-handler";
-import type { RequestHandler } from "express";
-import type { z } from "zod";
+import type { NextFunction, Request, RequestHandler, Response } from "express";
+import { ZodError, type z } from "zod";
 
 const validateParams = (schema: z.ZodType): RequestHandler => {
-  return (req, _res, next) => {
-    const result = schema.safeParse(req.params);
-
-    if (!result.success) {
-      throw new BadRequestError("Invalid params", result.error.issues);
+  return (req: Request, res: Response, next: NextFunction) => {
+    try {
+      res.locals.params = schema.parse(req.params);
+      next();
+    } catch (error) {
+      if (error instanceof ZodError) {
+        throw new BadRequestError("Invalid params", error.issues);
+      }
+      throw error;
     }
-
-    req.params = result.data as typeof req.params;
-    next();
   };
 };
 
