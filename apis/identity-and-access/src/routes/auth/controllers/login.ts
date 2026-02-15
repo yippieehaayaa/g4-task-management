@@ -58,9 +58,10 @@ const login = typedHandler<unknown, Body>(async (req, res) => {
   });
 
   const refreshToken = generateRefreshToken();
+  const normalizedRefreshToken = refreshToken.trim();
 
   await createSession({
-    token: refreshToken,
+    token: normalizedRefreshToken,
     identityId: identity.id,
     ipAddress: req.ip,
     userAgent: req.headers["user-agent"],
@@ -78,7 +79,7 @@ const login = typedHandler<unknown, Body>(async (req, res) => {
   res.json({
     data: {
       accessToken,
-      refreshToken,
+      refreshToken: normalizedRefreshToken,
       expiresIn: env.ACCESS_TOKEN_EXPIRY,
     },
   });

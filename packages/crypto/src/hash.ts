@@ -10,7 +10,9 @@ export const sha256 = (value: string): string =>
   createHash("sha256").update(value).digest("hex");
 
 export const hmac = (value: string): string =>
-  createHmac("sha256", getSecret()).update(value).digest("hex");
+  createHmac("sha256", getSecret())
+    .update(Buffer.from(value, "utf8"))
+    .digest("hex");
 
 export const verifyHmac = (value: string, hash: string): boolean => {
   const computed = Buffer.from(hmac(value));

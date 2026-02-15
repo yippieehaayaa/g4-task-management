@@ -10,6 +10,8 @@ type CreateSessionInput = {
   expiresInHours?: number;
 };
 
+const toTokenHash = (raw: string): string => hmac((raw ?? "").trim());
+
 const SESSION_PUBLIC_SELECT = {
   id: true,
   ipAddress: true,
@@ -26,7 +28,7 @@ const createSession = async (input: CreateSessionInput) => {
 
   return await prisma.session.create({
     data: {
-      token: hmac(input.token),
+      token: toTokenHash(input.token),
       ipAddress: input.ipAddress,
       userAgent: input.userAgent,
       expiresAt,
@@ -36,21 +38,23 @@ const createSession = async (input: CreateSessionInput) => {
 };
 
 const findSessionByToken = async (token: string, identityId: string) => {
-  return await prisma.session.findUnique({
+  return await prisma.session.findFirst({
     where: {
-      token: hmac(token),
+      token: toTokenHash(token),
       identityId,
-      revokedAt: null,
+      revokedAt: { isSet: false },
       expiresAt: { gt: new Date() },
     },
   });
 };
 
 const findActiveSessionByToken = async (token: string) => {
-  return await prisma.session.findUnique({
+  const tokenHash = toTokenHash(token);
+
+  return await prisma.session.findFirst({
     where: {
-      token: hmac(token),
-      revokedAt: null,
+      token: tokenHash,
+      revokedAt: { isSet: false },
       expiresAt: { gt: new Date() },
     },
   });
@@ -67,7 +71,7 @@ const listSessionsByIdentity = async (identityId: string) => {
   return await prisma.session.findMany({
     where: {
       identityId,
-      revokedAt: null,
+      revokedAt: { isSet: false },
       expiresAt: { gt: new Date() },
     },
     select: SESSION_PUBLIC_SELECT,
@@ -76,10 +80,12 @@ const listSessionsByIdentity = async (identityId: string) => {
 };
 
 const revokeSession = async (token: string, identityId: string) => {
-  return await prisma.session.update({
-    where: { token: hmac(token), identityId },
+  const hash = toTokenHash(token);
+  const result = await prisma.session.updateMany({
+    where: { token: hash, identityId, revokedAt: { isSet: false } },
     data: { revokedAt: new Date() },
   });
+  if (result.count === 0) throw new SessionNotFoundError();
 };
 
 const revokeSessionById = async (id: string, identityId: string) => {
@@ -96,7 +102,7 @@ const revokeSessionById = async (id: string, identityId: string) => {
 
 const revokeAllSessions = async (identityId: string) => {
   return await prisma.session.updateMany({
-    where: { identityId, revokedAt: null },
+    where: { identityId, revokedAt: { isSet: false } },
     data: { revokedAt: new Date() },
   });
 };
