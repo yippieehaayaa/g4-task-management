@@ -1,37 +1,37 @@
 {
-    "name": "@g4/schemas",
-    "description": "Shared Zod schemas",
-    "author": "Joshua Dave E. Oropilla <joshdave0915@gmail.com>",
-    "license": "MIT",
-    "version": "1.0.0",
-    "private": true,
-    "exports": {
-      ".": {
-        "types": "./dist/index.d.ts",
-        "import": "./dist/index.mjs",
-        "require": "./dist/index.js",
-        "default": "./dist/index.js"
-      },
-      "./*": {
-        "types": "./dist/*/index.d.ts",
-        "import": "./dist/*/index.mjs",
-        "require": "./dist/*/index.js",
-        "default": "./dist/*/index.js"
-      }
+  "name": "@g4/schemas",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "tsup",
+    "watch": "tsup --watch"
+  },
+  "dependencies": {
+    "zod": "4.3.6"
+  },
+  "devDependencies": {
+    "@g4/typescript-config": "*",
+    "tsup": "^8.5.1",
+    "typescript": "5.9.2"
+  },
+  "author": "Joshua Dave E. Oropilla <joshdave0915@gmail.com>",
+  "description": "Shared Zod schemas",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js"
     },
-    "main": "./dist/index.js",
-    "module": "./dist/index.mjs",
-    "types": "./dist/index.d.ts",
-    "scripts": {
-      "build": "tsup",
-      "watch": "tsup --watch"
-    },
-    "dependencies": {
-      "zod": "4.3.6"
-    },
-    "devDependencies": {
-      "@g4/typescript-config": "*",
-      "tsup": "^8.5.1",
-      "typescript": "5.9.2"
+    "./*": {
+      "types": "./dist/*/index.d.ts",
+      "import": "./dist/*/index.mjs",
+      "require": "./dist/*/index.js",
+      "default": "./dist/*/index.js"
     }
-  }
+  },
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts"
+}

@@ -1,9 +1,12 @@
 {
   "name": "@g4/identity-and-access",
-  "description": "Identity and Access Management",
-  "author": "Joshua Dave E. Oropilla <joshdave0915@gmail.com>",
   "version": "1.0.0",
-  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "check-types": "turbo run check-types",
+    "dev": "nodemon ./src/index.ts",
+    "lint": "turbo run lint"
+  },
   "dependencies": {
     "@g4/bcrypt": "*",
     "@g4/db-iam": "*",
@@ -26,14 +29,11 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/morgan": "^1.9.10",
-    "typescript": "5.9.2",
     "nodemon": "^3.1.11",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "typescript": "5.9.2"
   },
-  "scripts": {
-    "build": "tsc",
-    "dev": "nodemon ./src/index.ts",
-    "lint": "turbo run lint",
-    "check-types": "turbo run check-types"
-  }
+  "author": "Joshua Dave E. Oropilla <joshdave0915@gmail.com>",
+  "description": "Identity and Access Management",
+  "license": "MIT"
 }

@@ -1,9 +1,28 @@
 {
   "name": "@g4/db-iam",
-  "description": "Identity and Access Management Database",
-  "author": "Joshua Dave E. Oropilla <joshdave0915@gmail.com>",
-  "license": "MIT",
   "version": "1.0.0",
+  "scripts": {
+    "build": "prisma generate && tsup src",
+    "generate": "prisma generate",
+    "push": "prisma db push",
+    "seed": "prisma db seed",
+    "watch": "tsup src --watch"
+  },
+  "dependencies": {
+    "@g4/bcrypt": "*",
+    "@g4/crypto": "*",
+    "@prisma/client": "6.19.0",
+    "tsx": "^4.21.0"
+  },
+  "devDependencies": {
+    "@g4/typescript-config": "*",
+    "@types/node": "^25.2.3",
+    "prisma": "6.19.0",
+    "tsup": "^8.5.1",
+    "typescript": "5.9.2"
+  },
+  "author": "Joshua Dave E. Oropilla <joshdave0915@gmail.com>",
+  "description": "Identity and Access Management Database",
   "exports": {
     ".": {
       "types": "./src/index.ts",
@@ -18,28 +37,9 @@
       "default": "./build/models/*.js"
     }
   },
+  "license": "MIT",
   "prisma": {
-  "schema": "prisma/schema",
-  "seed": "npx tsx prisma/seed/index.ts"
-},
-  "scripts": {
-    "generate": "prisma generate",
-    "build": "prisma generate && tsup src",
-    "push": "prisma db push",
-    "seed": "prisma db seed",
-    "watch": "tsup src --watch"
-  },
-  "devDependencies": {
-    "@g4/typescript-config": "*",
-    "@types/node": "^25.2.3",
-    "prisma": "6.19.0",
-    "tsup": "^8.5.1",
-    "typescript": "5.9.2"
-  },
-  "dependencies": {
-    "@g4/bcrypt": "*",
-    "@g4/crypto": "*",
-    "@prisma/client": "6.19.0",
-    "tsx": "^4.21.0"
+    "schema": "prisma/schema",
+    "seed": "npx tsx prisma/seed/index.ts"
   }
 }

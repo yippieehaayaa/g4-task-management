@@ -15,7 +15,9 @@
       "!**/generated",
       "!**/package.json",
       "!**/build",
-      "!**/.turbo"
+      "!**/.turbo",
+      "!**/src/routeTree.gen.ts",
+      "!**/src/styles.css"
     ]
   },
   "formatter": {
@@ -35,7 +37,8 @@
       "!**/prisma/",
       "!**/generated/",
       "!**/build/",
-      "!**/.turbo/"
+      "!**/.turbo/",
+      "!**/src/routeTree.gen.ts"
     ]
   },
   "assist": {
@@ -49,6 +52,28 @@
     "enabled": true,
     "rules": {
       "recommended": true,
+      "correctness": {
+        "noUnusedImports": {
+          "level": "info",
+          "fix": "safe"
+        }
+      },
+      "complexity": {
+        "noUselessFragments": {
+          "level": "error",
+          "fix": "safe"
+        }
+      },
+      "nursery": {
+        "useSortedClasses": {
+          "fix": "safe",
+          "level": "warn",
+          "options": {
+            "attributes": ["classList"],
+            "functions": ["clsx", "cva", "tw"]
+          }
+        }
+      },
       "style": {
         "noParameterAssign": "error",
         "useAsConstAssertion": "error",
@@ -74,6 +99,7 @@
       "quoteStyle": "double",
       "attributePosition": "auto",
       "bracketSpacing": true
-    }
+    },
+    "globals": ["React", "JSX"]
   }
 }

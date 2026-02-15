@@ -1,27 +1,27 @@
 {
-    "name": "@g4/crypto",
-    "description": "HMAC and SHA-256 hashing utilities",
-    "author": "Joshua Dave E. Oropilla <joshdave0915@gmail.com>",
-    "license": "MIT",
-    "version": "1.0.0",
-    "private": true,
-    "exports": {
-      ".": {
-        "types": "./dist/index.d.ts",
-        "import": "./dist/index.mjs",
-        "require": "./dist/index.js"
-      }
-    },
-    "main": "./dist/index.js",
-    "module": "./dist/index.mjs",
-    "types": "./dist/index.d.ts",
-    "scripts": {
-      "build": "tsup src",
-      "watch": "tsup src --watch"
-    },
-    "devDependencies": {
-      "@g4/typescript-config": "*",
-      "tsup": "^8.5.1",
-      "typescript": "5.9.2"
+  "name": "@g4/crypto",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "tsup src",
+    "watch": "tsup src --watch"
+  },
+  "devDependencies": {
+    "@g4/typescript-config": "*",
+    "tsup": "^8.5.1",
+    "typescript": "5.9.2"
+  },
+  "author": "Joshua Dave E. Oropilla <joshdave0915@gmail.com>",
+  "description": "HMAC and SHA-256 hashing utilities",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
     }
-  }
+  },
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts"
+}
