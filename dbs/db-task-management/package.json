@@ -1,0 +1,43 @@
+{
+  "name": "@g4/db-task-management",
+  "description": "Task Management Database",
+  "author": "Joshua Dave E. Oropilla <joshdave0915@gmail.com>",
+  "license": "MIT",
+  "version": "1.0.0",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./build/index.mjs",
+      "require": "./build/index.js",
+      "default": "./build/index.js"
+    },
+    "./models/*": {
+      "types": "./src/models/*.ts",
+      "import": "./build/models/*.mjs",
+      "require": "./build/models/*.js",
+      "default": "./build/models/*.js"
+    }
+  },
+  "prisma": {
+    "schema": "prisma/schema",
+    "seed": "npx tsx prisma/seed/index.ts"
+  },
+  "scripts": {
+    "generate": "prisma generate",
+    "build": "prisma generate && tsup src",
+    "push": "prisma db push",
+    "seed": "prisma db seed",
+    "watch": "tsup src --watch"
+  },
+  "devDependencies": {
+    "@g4/typescript-config": "*",
+    "@types/node": "^25.2.3",
+    "prisma": "6.19.0",
+    "tsup": "^8.5.1",
+    "typescript": "5.9.2"
+  },
+  "dependencies": {
+    "@prisma/client": "6.19.0",
+    "tsx": "^4.21.0"
+  }
+}

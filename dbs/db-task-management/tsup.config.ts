@@ -1,9 +1,8 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-  entry: ["src/index.ts", "src/iam/index.ts", "src/task-management/index.ts"],
+  entry: ["src/index.ts"],
   format: ["esm", "cjs"],
-  dts: true,
   splitting: true,
   sourcemap: process.env.NODE_ENV !== "production",
   clean: true,
@@ -11,10 +10,12 @@ export default defineConfig({
   treeshake: {
     preset: "recommended",
   },
-  outDir: "dist",
-  target: "es2020",
-  platform: "node",
+  outDir: "build",
   skipNodeModulesBundle: true,
   metafile: true,
-  external: ["zod"],
+  esbuildOptions(options) {
+    options.conditions = ["module"];
+    options.chunkNames = "_chunks/[name]-[hash]";
+    options.assetNames = "_assets/[name]-[hash]";
+  },
 });
