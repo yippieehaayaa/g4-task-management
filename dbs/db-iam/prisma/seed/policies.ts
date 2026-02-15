@@ -19,9 +19,17 @@ const IAM_POLICIES = [
   { name: "iam:otps:write", description: "Write OTPs" },
 ] as const;
 
+const TM_POLICIES = [
+  { name: "tm:tasks:read", description: "Read tasks" },
+  { name: "tm:tasks:write", description: "Write tasks" },
+  { name: "tm:tasks:delete", description: "Delete tasks" },
+] as const;
+
+const ALL_POLICIES = [...IAM_POLICIES, ...TM_POLICIES];
+
 const seedPolicies = async (prisma: PrismaClient) => {
   const policies = await Promise.all(
-    IAM_POLICIES.map((policy) =>
+    ALL_POLICIES.map((policy) =>
       prisma.policy.upsert({
         where: { name: policy.name },
         update: {},
