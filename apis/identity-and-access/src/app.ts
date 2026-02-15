@@ -7,6 +7,7 @@ import morgan from "morgan";
 import { apiRateLimiter } from "./middlewares/rateLimiter";
 import { requestId } from "./middlewares/requestId";
 import routes from "./routes";
+import { dbIamErrorMapper } from "./middlewares/errorMapper";
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.use(apiRateLimiter);
 app.use(routes);
 
 app.use(notFoundHandler);
+app.use(dbIamErrorMapper);
 app.use(errorHandler);
 
 export default app;

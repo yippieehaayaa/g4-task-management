@@ -1,12 +1,9 @@
-import { findPolicyById } from "@g4/db-iam";
-import { NotFoundError } from "@g4/error-handler";
+import { findGroupByIdOrThrow } from "@g4/db-iam";
 import { typedHandler } from "../../../utils/typedHandler";
 
 const show = typedHandler<{ id: string }>(async (_req, res) => {
-  const policy = await findPolicyById(res.locals.params.id);
-  if (!policy) throw new NotFoundError("Policy not found");
-
-  res.json({ data: policy });
+  const group = await findGroupByIdOrThrow(res.locals.params.id);
+  res.json({ data: group });
 });
 
 export { show };

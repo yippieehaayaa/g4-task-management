@@ -1,11 +1,8 @@
-import { findRoleById } from "@g4/db-iam";
-import { NotFoundError } from "@g4/error-handler";
+import { findRoleByIdOrThrow } from "@g4/db-iam";
 import { typedHandler } from "../../../utils/typedHandler";
 
 const show = typedHandler<{ id: string }>(async (_req, res) => {
-  const role = await findRoleById(res.locals.params.id);
-  if (!role) throw new NotFoundError("Role not found");
-
+  const role = await findRoleByIdOrThrow(res.locals.params.id);
   res.json({ data: role });
 });
 

@@ -1,11 +1,8 @@
-import { findPublicIdentityById } from "@g4/db-iam";
-import { NotFoundError } from "@g4/error-handler";
+import { findPublicIdentityByIdOrThrow } from "@g4/db-iam";
 import { typedHandler } from "../../../utils/typedHandler";
 
 const show = typedHandler<{ id: string }>(async (_req, res) => {
-  const identity = await findPublicIdentityById(res.locals.params.id);
-  if (!identity) throw new NotFoundError("Identity not found");
-
+  const identity = await findPublicIdentityByIdOrThrow(res.locals.params.id);
   res.json({ data: identity });
 });
 

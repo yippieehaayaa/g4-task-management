@@ -1,17 +1,17 @@
-import { createPolicy, findPolicyByName } from "@g4/db-iam";
+import { createGroup, findGroupByName } from "@g4/db-iam";
 import { ConflictError } from "@g4/error-handler";
-import type { createPolicySchema } from "@g4/schemas/iam";
+import type { createGroupSchema } from "@g4/schemas/iam";
 import type { z } from "zod";
 import { typedHandler } from "../../../utils/typedHandler";
 
-type Body = z.infer<typeof createPolicySchema>;
+type Body = z.infer<typeof createGroupSchema>;
 
 const create = typedHandler<unknown, Body>(async (_req, res) => {
-  const existing = await findPolicyByName(res.locals.body.name);
-  if (existing) throw new ConflictError("Policy name already exists");
+  const existing = await findGroupByName(res.locals.body.name);
+  if (existing) throw new ConflictError("Group name already exists");
 
-  const policy = await createPolicy(res.locals.body);
-  res.status(201).json({ data: policy });
+  const group = await createGroup(res.locals.body);
+  res.status(201).json({ data: group });
 });
 
 export { create };

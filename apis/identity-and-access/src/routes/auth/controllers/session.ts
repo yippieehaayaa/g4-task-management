@@ -1,5 +1,4 @@
 import { listSessionsByIdentity, revokeSessionById } from "@g4/db-iam";
-import { NotFoundError } from "@g4/error-handler";
 import { audit } from "../../../utils/audit";
 import { typedHandler } from "../../../utils/typedHandler";
 
@@ -9,11 +8,7 @@ const listSessions = typedHandler(async (req, res) => {
 });
 
 const revokeSession = typedHandler<{ sessionId: string }>(async (req, res) => {
-  try {
-    await revokeSessionById(res.locals.params.sessionId, req.identity.id);
-  } catch {
-    throw new NotFoundError("Session not found");
-  }
+  await revokeSessionById(res.locals.params.sessionId, req.identity.id);
 
   audit({
     event: "session.revoked",

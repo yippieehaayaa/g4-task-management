@@ -1,10 +1,19 @@
 import { encryptPassword, verifyPassword } from "@g4/bcrypt";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import {
   type IdentityKind,
   type IdentityStatus,
   type Prisma,
   prisma,
 } from "../client";
+import {
+  AccountLockedError,
+  IdentityNotFoundError,
+  InvalidCredentialsError,
+  InvalidCurrentPasswordError,
+  PasswordReuseError,
+  UsernameExistsError,
+} from "../errors";
 
 type AuthIdentity = Prisma.IdentityGetPayload<{
   select: typeof IDENTITY_AUTH_SELECT;
@@ -113,15 +122,22 @@ const countIdentities = async (
 const createIdentity = async (input: CreateIdentityInput) => {
   const { salt, hash } = await encryptPassword(input.password);
 
-  return await prisma.identity.create({
-    data: {
-      username: input.username,
-      email: input.email,
-      hash,
-      salt,
-      kind: input.kind,
-    },
-  });
+  try {
+    return await prisma.identity.create({
+      data: {
+        username: input.username,
+        email: input.email,
+        hash,
+        salt,
+        kind: input.kind,
+      },
+    });
+  } catch (e) {
+    if (e instanceof PrismaClientKnownRequestError && e.code === "P2002") {
+      throw new UsernameExistsError("Username already exists");
+    }
+    throw e;
+  }
 };
 
 const PASSWORD_HISTORY_DEPTH = 5;
@@ -141,11 +157,11 @@ const verifyIdentity = async (input: VerifyIdentityInput) => {
     });
 
     if (!found) {
-      throw new Error("Invalid credentials");
+      throw new InvalidCredentialsError();
     }
 
     if (found.lockedUntil && found.lockedUntil > new Date()) {
-      throw new Error("Account temporarily locked");
+      throw new AccountLockedError();
     }
 
     await tx.identity.update({
@@ -192,7 +208,7 @@ const verifyIdentity = async (input: VerifyIdentityInput) => {
       });
     }
 
-    throw new Error("Invalid credentials");
+    throw new InvalidCredentialsError();
   });
 };
 
@@ -238,6 +254,41 @@ const findPublicIdentityById = async (id: string) => {
   };
 };
 
+const findPublicIdentityByIdOrThrow = async (id: string) => {
+  const identity = await prisma.identity.findUnique({
+    where: { id },
+    select: {
+      ...IDENTITY_PUBLIC_SELECT,
+      roles: {
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          deletedAt: true,
+        },
+      },
+      groups: {
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          deletedAt: true,
+        },
+      },
+    },
+  });
+  if (!identity || !identity.active) {
+    throw new IdentityNotFoundError("Identity not found");
+  }
+  const activeRoles = identity.roles.filter((r) => !r.deletedAt);
+  const activeGroups = identity.groups.filter((g) => !g.deletedAt);
+  return {
+    ...identity,
+    roles: activeRoles,
+    groups: activeGroups,
+  };
+};
+
 const findIdentityByUsername = async (username: string) => {
   const identity = await prisma.identity.findUnique({
     where: { username },
@@ -247,6 +298,12 @@ const findIdentityByUsername = async (username: string) => {
 };
 
 const updateIdentity = async (id: string, input: UpdateIdentityInput) => {
+  const existing = await prisma.identity.findUnique({
+    where: { id, active: true },
+    select: { id: true },
+  });
+  if (!existing) throw new IdentityNotFoundError();
+
   return await prisma.identity.update({
     where: { id, active: true },
     data: input,
@@ -260,17 +317,17 @@ const changePassword = async (input: ChangePasswordInput) => {
   });
 
   if (!identity) {
-    throw new Error("Identity not found");
+    throw new IdentityNotFoundError();
   }
 
   const valid = await verifyPassword(input.currentPassword, identity.hash);
 
   if (!valid) {
-    throw new Error("Invalid current password");
+    throw new InvalidCurrentPasswordError();
   }
 
   if (input.currentPassword === input.newPassword) {
-    throw new Error("Password does not meet requirements");
+    throw new PasswordReuseError();
   }
 
   const history = await prisma.passwordHistory.findMany({
@@ -288,7 +345,7 @@ const changePassword = async (input: ChangePasswordInput) => {
   );
 
   if (results.some(Boolean)) {
-    throw new Error("Password does not meet requirements");
+    throw new PasswordReuseError();
   }
 
   const { salt, hash } = await encryptPassword(input.newPassword);
@@ -329,7 +386,7 @@ const changeEmail = async (input: ChangeEmailInput) => {
     });
 
     if (!identity) {
-      throw new Error("Identity not found");
+      throw new IdentityNotFoundError();
     }
 
     await tx.emailHistory.create({
@@ -356,6 +413,12 @@ const updateIdentityStatus = async (id: string, status: IdentityStatus) => {
 };
 
 const deactivateIdentity = async (id: string) => {
+  const existing = await prisma.identity.findUnique({
+    where: { id },
+    select: { id: true },
+  });
+  if (!existing) throw new IdentityNotFoundError();
+
   return await prisma.identity.update({
     where: { id },
     data: { active: false },
@@ -394,6 +457,7 @@ export {
   verifyIdentity,
   findIdentityById,
   findPublicIdentityById,
+  findPublicIdentityByIdOrThrow,
   findIdentityByUsername,
   listIdentities,
   countIdentities,

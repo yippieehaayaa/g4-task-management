@@ -1,5 +1,6 @@
 import { hmac } from "@g4/crypto";
 import { type Prisma, prisma } from "../client";
+import { SessionNotFoundError } from "../errors";
 
 type CreateSessionInput = {
   token: string;
@@ -82,6 +83,11 @@ const revokeSession = async (token: string, identityId: string) => {
 };
 
 const revokeSessionById = async (id: string, identityId: string) => {
+  const session = await prisma.session.findFirst({
+    where: { id, identityId },
+  });
+  if (!session) throw new SessionNotFoundError();
+
   return await prisma.session.update({
     where: { id, identityId },
     data: { revokedAt: new Date() },

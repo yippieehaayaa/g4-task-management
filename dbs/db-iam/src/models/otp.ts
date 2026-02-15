@@ -1,5 +1,11 @@
 import { hmac, verifyHmac } from "@g4/crypto";
 import { type OtpPurpose, prisma } from "../client";
+import {
+  InvalidOtpError,
+  MaxOtpAttemptsExceededError,
+  OtpExpiredError,
+  OtpNotFoundError,
+} from "../errors";
 
 type CreateOtpInput = {
   code: string;
@@ -51,7 +57,7 @@ const verifyOtp = async (input: VerifyOtpInput) => {
     });
 
     if (!otp) {
-      throw new Error("OTP not found");
+      throw new OtpNotFoundError();
     }
 
     if (otp.expiresAt < new Date()) {
@@ -59,7 +65,7 @@ const verifyOtp = async (input: VerifyOtpInput) => {
         where: { id: otp.id },
         data: { status: "EXPIRED" },
       });
-      throw new Error("OTP expired");
+      throw new OtpExpiredError();
     }
 
     if (otp.attempts >= MAX_ATTEMPTS) {
@@ -67,7 +73,7 @@ const verifyOtp = async (input: VerifyOtpInput) => {
         where: { id: otp.id },
         data: { status: "EXPIRED" },
       });
-      throw new Error("Maximum attempts exceeded");
+      throw new MaxOtpAttemptsExceededError();
     }
 
     if (!verifyHmac(input.code, otp.code)) {
@@ -75,7 +81,7 @@ const verifyOtp = async (input: VerifyOtpInput) => {
         where: { id: otp.id },
         data: { attempts: { increment: 1 } },
       });
-      throw new Error("Invalid OTP");
+      throw new InvalidOtpError();
     }
 
     return await tx.otp.update({

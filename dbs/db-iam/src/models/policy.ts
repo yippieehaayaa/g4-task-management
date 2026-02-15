@@ -1,4 +1,5 @@
 import { type PolicyEffect, prisma } from "../client";
+import { PolicyNotFoundError } from "../errors";
 
 type CreatePolicyInput = {
   name: string;
@@ -59,6 +60,12 @@ const findPolicyById = async (id: string) => {
   });
 };
 
+const findPolicyByIdOrThrow = async (id: string) => {
+  const policy = await findPolicyById(id);
+  if (!policy) throw new PolicyNotFoundError();
+  return policy;
+};
+
 const findPolicyByName = async (name: string) => {
   return await prisma.policy.findUnique({
     where: { name, deletedAt: null },
@@ -66,6 +73,9 @@ const findPolicyByName = async (name: string) => {
 };
 
 const updatePolicy = async (id: string, input: UpdatePolicyInput) => {
+  const existing = await findPolicyById(id);
+  if (!existing) throw new PolicyNotFoundError();
+
   return await prisma.policy.update({
     where: { id, deletedAt: null },
     data: input,
@@ -73,6 +83,9 @@ const updatePolicy = async (id: string, input: UpdatePolicyInput) => {
 };
 
 const softDeletePolicy = async (id: string) => {
+  const existing = await findPolicyById(id);
+  if (!existing) throw new PolicyNotFoundError();
+
   return await prisma.policy.update({
     where: { id },
     data: { deletedAt: new Date() },
@@ -84,6 +97,7 @@ export {
   countPolicies,
   createPolicy,
   findPolicyById,
+  findPolicyByIdOrThrow,
   findPolicyByName,
   updatePolicy,
   softDeletePolicy,

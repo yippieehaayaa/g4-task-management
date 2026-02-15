@@ -1,5 +1,4 @@
-import { createIdentity, findIdentityByUsername } from "@g4/db-iam";
-import { ConflictError } from "@g4/error-handler";
+import { createIdentity } from "@g4/db-iam";
 import type { createIdentitySchema } from "@g4/schemas/iam";
 import type { z } from "zod";
 import { audit } from "../../../utils/audit";
@@ -8,9 +7,6 @@ import { typedHandler } from "../../../utils/typedHandler";
 type Body = z.infer<typeof createIdentitySchema>;
 
 const register = typedHandler<unknown, Body>(async (req, res) => {
-  const existing = await findIdentityByUsername(res.locals.body.username);
-  if (existing) throw new ConflictError("Username already exists");
-
   const identity = await createIdentity(res.locals.body);
   const { hash, salt, ...data } = identity;
 

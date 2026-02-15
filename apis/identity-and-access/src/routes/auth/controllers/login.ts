@@ -1,5 +1,5 @@
 import { createSession, verifyIdentity } from "@g4/db-iam";
-import { ForbiddenError, TooManyRequestsError } from "@g4/error-handler";
+import { ForbiddenError } from "@g4/error-handler";
 import type { loginSchema } from "@g4/schemas/iam";
 import type { z } from "zod";
 import { env } from "../../../config";
@@ -10,6 +10,7 @@ import {
   generateRefreshToken,
 } from "../../../utils/token";
 import { typedHandler } from "../../../utils/typedHandler";
+import { mapDbIamError } from "../../../utils/mapError";
 
 type Body = z.infer<typeof loginSchema>;
 
@@ -24,11 +25,8 @@ const login = typedHandler<unknown, Body>(async (req, res) => {
       userAgent: req.headers["user-agent"],
     });
   } catch (error) {
-    console.error("Login error:", error);
-    if (
-      error instanceof Error &&
-      error.message === "Account temporarily locked"
-    ) {
+    const mapped = mapDbIamError(error);
+    if (mapped) {
       audit({
         event: "identity.login.failed",
         ip: req.ip,
@@ -36,25 +34,13 @@ const login = typedHandler<unknown, Body>(async (req, res) => {
         userAgent: req.headers["user-agent"],
         metadata: {
           username: res.locals.body.username,
-          reason: "account_locked",
+          reason:
+            mapped.status === 429 ? "account_locked" : "invalid_credentials",
         },
       });
-
-      throw new TooManyRequestsError("Account temporarily locked");
+      throw mapped;
     }
-
-    audit({
-      event: "identity.login.failed",
-      ip: req.ip,
-      requestId: req.id,
-      userAgent: req.headers["user-agent"],
-      metadata: {
-        username: res.locals.body.username,
-        reason: "invalid_credentials",
-      },
-    });
-
-    throw new ForbiddenError("Invalid credentials");
+    throw error;
   }
 
   if (identity.status === "SUSPENDED" || identity.status === "INACTIVE") {
