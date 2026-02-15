@@ -1,0 +1,34 @@
+{
+  "name": "@g4/api-gateway",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "tsc",
+    "check-types": "turbo run check-types",
+    "dev": "nodemon ./src/index.ts",
+    "lint": "turbo run lint"
+  },
+  "dependencies": {
+    "@g4/error-handler": "*",
+    "@g4/logger": "*",
+    "cors": "^2.8.6",
+    "dotenv": "^17.2.4",
+    "express": "5.2.1",
+    "express-rate-limit": "^8.2.1",
+    "helmet": "^8.1.0",
+    "http-proxy-middleware": "^3.0.3",
+    "morgan": "^1.10.1",
+    "zod": "4.3.6"
+  },
+  "devDependencies": {
+    "@g4/typescript-config": "*",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/morgan": "^1.9.10",
+    "nodemon": "^3.1.11",
+    "ts-node": "^10.9.2",
+    "typescript": "5.9.2"
+  },
+  "author": "Joshua Dave E. Oropilla <joshdave0915@gmail.com>",
+  "description": "API Gateway Service",
+  "license": "MIT"
+}
