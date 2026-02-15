@@ -4,10 +4,10 @@ import cors from "cors";
 import express from "express";
 import helmet from "helmet";
 import morgan from "morgan";
+import { dbIamErrorMapper } from "./middlewares/errorMapper";
 import { apiRateLimiter } from "./middlewares/rateLimiter";
 import { requestId } from "./middlewares/requestId";
 import routes from "./routes";
-import { dbIamErrorMapper } from "./middlewares/errorMapper";
 
 const app = express();
 

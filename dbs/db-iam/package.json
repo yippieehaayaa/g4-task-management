@@ -23,10 +23,10 @@
   "seed": "npx tsx prisma/seed/index.ts"
 },
   "scripts": {
-    "db:generate": "prisma generate",
-    "db:build": "prisma generate && tsup src",
-    "db:push": "prisma db push",
-    "db:seed": "prisma db seed",
+    "generate": "prisma generate",
+    "build": "prisma generate && tsup src",
+    "push": "prisma db push",
+    "seed": "prisma db seed",
     "watch": "tsup src --watch"
   },
   "devDependencies": {

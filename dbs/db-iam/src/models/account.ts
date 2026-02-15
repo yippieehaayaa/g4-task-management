@@ -1,5 +1,4 @@
 import { encryptPassword, verifyPassword } from "@g4/bcrypt";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import {
   type IdentityKind,
   type IdentityStatus,
@@ -8,6 +7,7 @@ import {
 } from "../client";
 import {
   AccountLockedError,
+  EmailExistsError,
   IdentityNotFoundError,
   InvalidCredentialsError,
   InvalidCurrentPasswordError,
@@ -133,7 +133,15 @@ const createIdentity = async (input: CreateIdentityInput) => {
       },
     });
   } catch (e) {
-    if (e instanceof PrismaClientKnownRequestError && e.code === "P2002") {
+    const err = e as { code?: string; meta?: { target?: string | string[] } };
+    if (err?.code === "P2002" && err?.meta?.target) {
+      const target =
+        typeof err.meta.target === "string"
+          ? err.meta.target
+          : err.meta.target[0];
+      if (target === "identities_email_key") {
+        throw new EmailExistsError("Email already exists");
+      }
       throw new UsernameExistsError("Username already exists");
     }
     throw e;

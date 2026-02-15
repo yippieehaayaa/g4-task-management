@@ -11,6 +11,13 @@ declare global {
     interface Request {
       id: string;
       identity: Identity;
+      rateLimit?: {
+        limit: number;
+        used: number;
+        remaining: number;
+        resetTime?: Date;
+        key: string;
+      };
     }
   }
 }

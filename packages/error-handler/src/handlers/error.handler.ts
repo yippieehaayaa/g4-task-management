@@ -13,6 +13,21 @@ const errorHandler: ErrorRequestHandler = (
   _next: NextFunction,
 ) => {
   if (err instanceof AppError) {
+    if (
+      err.status === 429 &&
+      err.details &&
+      typeof err.details === "object" &&
+      "retryAfterSeconds" in err.details &&
+      typeof (err.details as { retryAfterSeconds: number })
+        .retryAfterSeconds === "number"
+    ) {
+      res.setHeader(
+        "Retry-After",
+        String(
+          (err.details as { retryAfterSeconds: number }).retryAfterSeconds,
+        ),
+      );
+    }
     return res.status(err.status).json(err);
   }
 

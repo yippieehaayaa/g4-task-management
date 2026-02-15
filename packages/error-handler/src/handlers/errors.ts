@@ -53,8 +53,8 @@ class ConflictError extends AppError {
 }
 
 class TooManyRequestsError extends AppError {
-  constructor(message = "Too many requests") {
-    super(message, 429);
+  constructor(message = "Too many requests", details?: unknown) {
+    super(message, 429, details);
   }
 }
 

@@ -14,6 +14,14 @@ class InvalidCredentialsError extends Error {
   }
 }
 
+class EmailExistsError extends Error {
+  constructor(message = "Email already exists") {
+    super(message);
+    this.name = "EmailExistsError";
+    Object.setPrototypeOf(this, EmailExistsError.prototype);
+  }
+}
+
 class AccountLockedError extends Error {
   constructor(message = "Account temporarily locked") {
     super(message);
@@ -112,6 +120,7 @@ class InvalidOtpError extends Error {
 
 export {
   AccountLockedError,
+  EmailExistsError,
   GroupNotFoundError,
   IdentityNotFoundError,
   InvalidCredentialsError,

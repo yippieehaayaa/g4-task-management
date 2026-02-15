@@ -4,13 +4,13 @@ import type { loginSchema } from "@g4/schemas/iam";
 import type { z } from "zod";
 import { env } from "../../../config";
 import { audit } from "../../../utils/audit";
+import { mapDbIamError } from "../../../utils/mapError";
 import { resolvePermissions } from "../../../utils/permissions";
 import {
   generateAccessToken,
   generateRefreshToken,
 } from "../../../utils/token";
 import { typedHandler } from "../../../utils/typedHandler";
-import { mapDbIamError } from "../../../utils/mapError";
 
 type Body = z.infer<typeof loginSchema>;
 

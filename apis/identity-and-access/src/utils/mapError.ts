@@ -1,5 +1,6 @@
 import {
   AccountLockedError,
+  EmailExistsError,
   GroupNotFoundError,
   IdentityNotFoundError,
   InvalidCredentialsError,
@@ -35,6 +36,7 @@ export function mapDbIamError(err: unknown): AppError | null {
     return new UnauthorizedError(err.message);
   if (err instanceof PasswordReuseError)
     return new BadRequestError(err.message, { code: "PASSWORD_REUSED" });
+  if (err instanceof EmailExistsError) return new ConflictError(err.message);
   if (err instanceof UsernameExistsError) return new ConflictError(err.message);
   if (err instanceof RoleNotFoundError) return new NotFoundError(err.message);
   if (err instanceof GroupNotFoundError) return new NotFoundError(err.message);
