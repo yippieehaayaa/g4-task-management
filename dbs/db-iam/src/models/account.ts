@@ -186,7 +186,7 @@ const verifyIdentity = async (input: VerifyIdentityInput) => {
     if (valid) {
       await tx.identity.update({
         where: { id: identity.id },
-        data: { failedLoginAttempts: 0, lockedUntil: null },
+        data: { failedLoginAttempts: 0, lockedUntil: { unset: true } },
       });
 
       if (input.ipAddress) {
@@ -443,7 +443,7 @@ const softDeleteIdentity = async (id: string) => {
 const unlockIdentity = async (id: string) => {
   return await prisma.identity.update({
     where: { id },
-    data: { failedLoginAttempts: 0, lockedUntil: null },
+    data: { failedLoginAttempts: 0, lockedUntil: { unset: true } },
   });
 };
 

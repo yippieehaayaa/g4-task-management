@@ -19,7 +19,7 @@ type ListRolesInput = {
 
 const listRoles = async (input: ListRolesInput) => {
   const where = {
-    deletedAt: null,
+    deletedAt: { isSet: false },
     ...(input.search && {
       name: { contains: input.search, mode: "insensitive" as const },
     }),
@@ -27,7 +27,7 @@ const listRoles = async (input: ListRolesInput) => {
 
   return await prisma.role.findMany({
     where,
-    include: { policies: { where: { deletedAt: null } } },
+    include: { policies: { where: { deletedAt: { isSet: false } } } },
     skip: (input.page - 1) * input.limit,
     take: input.limit,
     orderBy: { createdAt: "desc" },
@@ -37,7 +37,7 @@ const listRoles = async (input: ListRolesInput) => {
 const countRoles = async (search?: string) => {
   return await prisma.role.count({
     where: {
-      deletedAt: null,
+      deletedAt: { isSet: false },
       ...(search && {
         name: { contains: search, mode: "insensitive" as const },
       }),
@@ -51,7 +51,7 @@ const createRole = async (input: CreateRoleInput) => {
 
 const findRoleById = async (id: string) => {
   return await prisma.role.findUnique({
-    where: { id, deletedAt: null },
+    where: { id, deletedAt: { isSet: false } },
     include: { policies: true },
   });
 };
@@ -64,7 +64,7 @@ const findRoleByIdOrThrow = async (id: string) => {
 
 const findRoleByName = async (name: string) => {
   return await prisma.role.findUnique({
-    where: { name, deletedAt: null },
+    where: { name, deletedAt: { isSet: false } },
   });
 };
 
@@ -73,7 +73,7 @@ const updateRole = async (id: string, input: UpdateRoleInput) => {
   if (!existing) throw new RoleNotFoundError();
 
   return await prisma.role.update({
-    where: { id, deletedAt: null },
+    where: { id, deletedAt: { isSet: false } },
     data: input,
   });
 };
@@ -93,7 +93,7 @@ const addPoliciesToRole = async (roleId: string, policyIds: string[]) => {
   if (!existing) throw new RoleNotFoundError();
 
   return await prisma.role.update({
-    where: { id: roleId, deletedAt: null },
+    where: { id: roleId, deletedAt: { isSet: false } },
     data: { policyIds: { push: policyIds } },
   });
 };
@@ -112,12 +112,12 @@ const removePoliciesFromRole = async (roleId: string, policyIds: string[]) => {
 
 const assignRoleToIdentity = async (identityId: string, roleId: string) => {
   const identity = await prisma.identity.findUnique({
-    where: { id: identityId, deletedAt: null },
+    where: { id: identityId, deletedAt: { isSet: false } },
   });
   if (!identity) throw new IdentityNotFoundError();
 
   return await prisma.identity.update({
-    where: { id: identityId, deletedAt: null },
+    where: { id: identityId, deletedAt: { isSet: false } },
     data: { roleIds: { push: roleId } },
   });
 };

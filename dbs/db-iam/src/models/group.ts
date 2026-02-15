@@ -19,7 +19,7 @@ type ListGroupsInput = {
 
 const listGroups = async (input: ListGroupsInput) => {
   const where = {
-    deletedAt: null,
+    deletedAt: { isSet: false },
     ...(input.search && {
       name: { contains: input.search, mode: "insensitive" as const },
     }),
@@ -28,9 +28,9 @@ const listGroups = async (input: ListGroupsInput) => {
   return await prisma.group.findMany({
     where,
     include: {
-      roles: { where: { deletedAt: null } },
+      roles: { where: { deletedAt: { isSet: false } } },
       identities: {
-        where: { deletedAt: null },
+        where: { deletedAt: { isSet: false } },
         select: { id: true, username: true, email: true },
       },
     },
@@ -43,7 +43,7 @@ const listGroups = async (input: ListGroupsInput) => {
 const countGroups = async (search?: string) => {
   return await prisma.group.count({
     where: {
-      deletedAt: null,
+      deletedAt: { isSet: false },
       ...(search && {
         name: { contains: search, mode: "insensitive" as const },
       }),
@@ -57,7 +57,7 @@ const createGroup = async (input: CreateGroupInput) => {
 
 const findGroupById = async (id: string) => {
   return await prisma.group.findUnique({
-    where: { id, deletedAt: null },
+    where: { id, deletedAt: { isSet: false } },
     include: { roles: true, identities: true },
   });
 };
@@ -70,7 +70,7 @@ const findGroupByIdOrThrow = async (id: string) => {
 
 const findGroupByName = async (name: string) => {
   return await prisma.group.findUnique({
-    where: { name, deletedAt: null },
+    where: { name, deletedAt: { isSet: false } },
   });
 };
 
@@ -79,7 +79,7 @@ const updateGroup = async (id: string, input: UpdateGroupInput) => {
   if (!existing) throw new GroupNotFoundError();
 
   return await prisma.group.update({
-    where: { id, deletedAt: null },
+    where: { id, deletedAt: { isSet: false } },
     data: input,
   });
 };
@@ -99,7 +99,7 @@ const addIdentitiesToGroup = async (groupId: string, identityIds: string[]) => {
   if (!existing) throw new GroupNotFoundError();
 
   return await prisma.group.update({
-    where: { id: groupId, deletedAt: null },
+    where: { id: groupId, deletedAt: { isSet: false } },
     data: { identityIds: { push: identityIds } },
   });
 };
@@ -124,7 +124,7 @@ const addRolesToGroup = async (groupId: string, roleIds: string[]) => {
   if (!existing) throw new GroupNotFoundError();
 
   return await prisma.group.update({
-    where: { id: groupId, deletedAt: null },
+    where: { id: groupId, deletedAt: { isSet: false } },
     data: { roleIds: { push: roleIds } },
   });
 };

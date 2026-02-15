@@ -110,7 +110,7 @@ const revokeAllSessions = async (identityId: string) => {
 const cleanExpiredSessions = async () => {
   return await prisma.session.deleteMany({
     where: {
-      OR: [{ expiresAt: { lt: new Date() } }, { revokedAt: { not: null } }],
+      OR: [{ expiresAt: { lt: new Date() } }, { revokedAt: { isSet: true } }],
     },
   });
 };

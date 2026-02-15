@@ -25,7 +25,7 @@ type ListPoliciesInput = {
 
 const listPolicies = async (input: ListPoliciesInput) => {
   const where = {
-    deletedAt: null,
+    deletedAt: { isSet: false },
     ...(input.search && {
       name: { contains: input.search, mode: "insensitive" as const },
     }),
@@ -42,7 +42,7 @@ const listPolicies = async (input: ListPoliciesInput) => {
 const countPolicies = async (search?: string) => {
   return await prisma.policy.count({
     where: {
-      deletedAt: null,
+      deletedAt: { isSet: false },
       ...(search && {
         name: { contains: search, mode: "insensitive" as const },
       }),
@@ -56,7 +56,7 @@ const createPolicy = async (input: CreatePolicyInput) => {
 
 const findPolicyById = async (id: string) => {
   return await prisma.policy.findUnique({
-    where: { id, deletedAt: null },
+    where: { id, deletedAt: { isSet: false } },
   });
 };
 
@@ -68,7 +68,7 @@ const findPolicyByIdOrThrow = async (id: string) => {
 
 const findPolicyByName = async (name: string) => {
   return await prisma.policy.findUnique({
-    where: { name, deletedAt: null },
+    where: { name, deletedAt: { isSet: false } },
   });
 };
 
@@ -77,7 +77,7 @@ const updatePolicy = async (id: string, input: UpdatePolicyInput) => {
   if (!existing) throw new PolicyNotFoundError();
 
   return await prisma.policy.update({
-    where: { id, deletedAt: null },
+    where: { id, deletedAt: { isSet: false } },
     data: input,
   });
 };
