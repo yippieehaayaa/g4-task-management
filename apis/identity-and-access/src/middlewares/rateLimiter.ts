@@ -19,42 +19,28 @@ const getRetryAfterSeconds = (
   return Math.ceil(windowMs / 1000);
 };
 
-const authRateLimiter = rateLimit({
-  windowMs: 60 * 1000,
-  limit: 5,
-  standardHeaders: "draft-7",
-  legacyHeaders: false,
-  handler: (req, _res, next, options) => {
-    const info = req.rateLimit as RateLimitInfo | undefined;
-    const retryAfterSeconds = getRetryAfterSeconds(
-      info,
-      options?.windowMs ?? 60 * 1000,
-    );
-    next(
-      new TooManyRequestsError("Too many requests", {
-        retryAfterSeconds,
-      }),
-    );
-  },
-});
+const createRateLimiter = (windowMs: number, limit: number) =>
+  rateLimit({
+    windowMs,
+    limit,
+    standardHeaders: "draft-7",
+    legacyHeaders: false,
+    handler: (req, res, next, options) => {
+      const info = req.rateLimit as RateLimitInfo | undefined;
+      const retryAfterSeconds = getRetryAfterSeconds(
+        info,
+        options?.windowMs ?? windowMs,
+      );
+      res.setHeader("Retry-After", retryAfterSeconds);
+      next(
+        new TooManyRequestsError("Too many requests", {
+          retryAfterSeconds,
+        }),
+      );
+    },
+  });
 
-const apiRateLimiter = rateLimit({
-  windowMs: 60 * 1000,
-  limit: 100,
-  standardHeaders: "draft-7",
-  legacyHeaders: false,
-  handler: (req, _res, next, options) => {
-    const info = req.rateLimit as RateLimitInfo | undefined;
-    const retryAfterSeconds = getRetryAfterSeconds(
-      info,
-      options?.windowMs ?? 60 * 1000,
-    );
-    next(
-      new TooManyRequestsError("Too many requests", {
-        retryAfterSeconds,
-      }),
-    );
-  },
-});
+const authRateLimiter = createRateLimiter(60 * 1000, 5);
+const apiRateLimiter = createRateLimiter(60 * 1000, 100);
 
 export { authRateLimiter, apiRateLimiter };
