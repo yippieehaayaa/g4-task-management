@@ -4,9 +4,10 @@ import { api, clearTokens, getRefreshToken } from "../../../client";
 export function useLogout() {
 	const queryClient = useQueryClient();
 	return useMutation({
-		mutationFn: () => {
+		mutationFn: async () => {
 			const token = getRefreshToken();
-			return api.post("/iam/auth/logout", { refreshToken: token });
+			if (!token) return;
+			await api.post("/iam/auth/logout", { refreshToken: token });
 		},
 		onSettled: () => {
 			clearTokens();

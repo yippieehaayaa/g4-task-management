@@ -8,17 +8,18 @@ export const Route = createFileRoute("/logout")({
 
 function LogoutPage() {
 	const navigate = useNavigate();
-	const { mutate: logout, isPending, isSuccess } = useLogout();
+	const { mutate: logout, isPending, isSuccess, isError } = useLogout();
 
 	useEffect(() => {
 		logout();
 	}, [logout]);
 
+	// Redirect once logout has finished (success or error); tokens are cleared in onSettled either way
 	useEffect(() => {
-		if (isSuccess && !isPending) {
+		if (!isPending && (isSuccess || isError)) {
 			navigate({ to: "/login", search: { redirectUrl: undefined }, replace: true });
 		}
-	}, [isSuccess, isPending, navigate]);
+	}, [isPending, isSuccess, isError, navigate]);
 
 	return (
 		<div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
