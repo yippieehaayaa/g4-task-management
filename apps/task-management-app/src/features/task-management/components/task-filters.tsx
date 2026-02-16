@@ -17,16 +17,16 @@ type TaskFiltersProps = {
 
 function TaskFilters({ value, onChange }: TaskFiltersProps) {
 	return (
-		<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-3">
-			<div className="relative flex-1">
-				<SearchIcon className="text-muted-foreground pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2" />
+		<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+			<div className="relative w-full min-w-0 flex-1">
+				<SearchIcon className="text-muted-foreground pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2" aria-hidden />
 				<Input
 					placeholder="Search tasks…"
 					value={value.search}
 					onChange={(e) =>
 						onChange({ ...value, search: e.target.value })
 					}
-					className="w-full pl-9"
+					className="w-full min-w-0 pl-9"
 					aria-label="Search tasks"
 				/>
 			</div>
@@ -40,7 +40,7 @@ function TaskFilters({ value, onChange }: TaskFiltersProps) {
 						})
 					}
 				>
-					<SelectTrigger className="w-full min-w-[8rem] sm:w-[10rem]">
+					<SelectTrigger className="h-9 w-full min-w-0 sm:w-[10rem]">
 						<SelectValue placeholder="Status" />
 					</SelectTrigger>
 					<SelectContent>
@@ -61,7 +61,7 @@ function TaskFilters({ value, onChange }: TaskFiltersProps) {
 						})
 					}
 				>
-					<SelectTrigger className="w-full min-w-[8rem] sm:w-[10rem]">
+					<SelectTrigger className="h-9 w-full min-w-0 sm:w-[10rem]">
 						<SelectValue placeholder="Priority" />
 					</SelectTrigger>
 					<SelectContent>

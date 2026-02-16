@@ -30,8 +30,10 @@ function RegisterPage() {
 	}
 
 	return (
-		<div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
-			<RegisterForm onSubmit={handleSubmit} isSubmitting={isPending} />
+		<div className="flex min-h-screen flex-col items-center justify-center bg-background p-5 sm:p-6 md:p-8">
+			<div className="w-full max-w-md">
+				<RegisterForm onSubmit={handleSubmit} isSubmitting={isPending} />
+			</div>
 		</div>
 	);
 }

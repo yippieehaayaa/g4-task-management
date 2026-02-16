@@ -42,13 +42,15 @@ function LoginPage() {
 	}
 
 	return (
-		<div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
+		<div className="flex min-h-screen flex-col items-center justify-center bg-background p-5 sm:p-6 md:p-8">
 			{error && (
-				<p className="text-destructive mb-4 text-center text-sm" role="alert">
+				<p className="text-destructive mb-5 text-center text-sm" role="alert">
 					{error}
 				</p>
 			)}
-			<LoginForm onSubmit={handleSubmit} isSubmitting={isPending} />
+			<div className="w-full max-w-md">
+				<LoginForm onSubmit={handleSubmit} isSubmitting={isPending} />
+			</div>
 		</div>
 	);
 }

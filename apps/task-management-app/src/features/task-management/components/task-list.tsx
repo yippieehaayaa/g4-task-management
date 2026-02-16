@@ -1,7 +1,15 @@
-import { ListTodoIcon, PlusIcon } from "lucide-react";
+import { CircleAlert, ListTodoIcon, PlusIcon } from "lucide-react";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
+import {
+	Alert,
+	AlertDescription,
+	AlertTitle,
+} from "@/components/ui/alert";
+import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
 	listQuery,
 	useCreateTask,
@@ -93,46 +101,91 @@ function TaskList() {
 
 	return (
 		<div className="flex flex-col gap-6">
-			<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-				<h2 className="text-2xl font-semibold tracking-tight">Tasks</h2>
-				<Button
-					onClick={() => {
-						setEditingTask(null);
-						setFormOpen(true);
-					}}
-					className="w-full sm:w-auto"
-				>
-					<PlusIcon className="size-4" />
-					Add task
-				</Button>
-			</div>
-
-			<TaskFiltersComponent value={filters} onChange={setFilters} />
-
-			{isError ? (
-				<div className="rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-4 text-sm text-destructive">
-					{error instanceof Error ? error.message : "Failed to load tasks"}
-				</div>
-			) : isPending ? (
-				<div className="flex flex-col items-center justify-center rounded-lg border border-dashed bg-muted/50 px-4 py-16 text-center">
-					<p className="text-muted-foreground text-sm">Loading tasks…</p>
-				</div>
-			) : tasks.length === 0 ? (
-				<div className="flex flex-col items-center justify-center rounded-lg border border-dashed bg-muted/50 px-4 py-16 text-center">
-					<ListTodoIcon className="text-muted-foreground mb-4 size-12" />
-					<p className="text-muted-foreground mb-2 text-sm font-medium">
-						No tasks yet
-					</p>
-					<p className="text-muted-foreground mb-4 max-w-sm text-sm">
-						Create a task to get started, or adjust your filters.
-					</p>
-					<Button variant="outline" onClick={() => setFormOpen(true)}>
-						<PlusIcon className="size-4" />
+			<header className="space-y-2">
+				<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+					<div>
+						<h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+							Tasks
+						</h1>
+						<p className="text-muted-foreground mt-1 text-sm">
+							Create and manage your tasks. Filter by status or priority.
+						</p>
+					</div>
+					<Button
+						onClick={() => {
+							setEditingTask(null);
+							setFormOpen(true);
+						}}
+						className="w-full shrink-0 sm:w-auto"
+					>
+						<PlusIcon className="size-4" aria-hidden />
 						Add task
 					</Button>
 				</div>
+				<Separator className="mt-4" />
+			</header>
+
+			<Card className="border bg-card">
+				<CardContent className="p-4 sm:p-5">
+					<p className="text-muted-foreground mb-3 text-xs font-medium uppercase tracking-wider sm:mb-4">
+						Filters
+					</p>
+					<TaskFiltersComponent value={filters} onChange={setFilters} />
+				</CardContent>
+			</Card>
+
+			{isError ? (
+				<Alert variant="destructive" className="rounded-xl">
+					<CircleAlert className="size-4" />
+					<AlertTitle>Failed to load tasks</AlertTitle>
+					<AlertDescription>
+						{error instanceof Error ? error.message : "Something went wrong. Try again later."}
+					</AlertDescription>
+				</Alert>
+			) : isPending ? (
+				<ul className="grid list-none gap-4 p-0 sm:grid-cols-1 lg:gap-5" aria-busy="true" aria-label="Loading tasks">
+					{[1, 2, 3].map((i) => (
+						<li key={i}>
+							<Card className="overflow-hidden border">
+								<CardContent className="flex flex-row items-start gap-4 p-5 sm:p-6">
+									<Skeleton className="size-5 shrink-0 rounded-md" />
+									<div className="min-w-0 flex-1 space-y-2">
+										<Skeleton className="h-5 w-[75%] max-w-[12rem]" />
+										<Skeleton className="h-4 w-full max-w-[16rem]" />
+										<div className="flex gap-2 pt-1">
+											<Skeleton className="h-5 w-16 rounded-full" />
+											<Skeleton className="h-5 w-14 rounded-full" />
+										</div>
+									</div>
+								</CardContent>
+							</Card>
+						</li>
+					))}
+				</ul>
+			) : tasks.length === 0 ? (
+				<Card className="overflow-hidden border-dashed">
+					<CardContent className="flex flex-col items-center justify-center py-14 text-center sm:py-20">
+						<div className="bg-muted/50 mb-5 flex size-16 items-center justify-center rounded-full">
+							<ListTodoIcon className="text-muted-foreground size-8" aria-hidden />
+						</div>
+						<h2 className="text-muted-foreground mb-1.5 text-base font-medium">
+							No tasks yet
+						</h2>
+						<p className="text-muted-foreground mb-8 max-w-sm text-sm leading-relaxed">
+							Create your first task to get started, or adjust your filters to see existing tasks.
+						</p>
+						<Button variant="outline" size="lg" onClick={() => setFormOpen(true)}>
+							<PlusIcon className="size-4" aria-hidden />
+							Add task
+						</Button>
+					</CardContent>
+				</Card>
 			) : (
-				<ul className="grid list-none gap-4 p-0 sm:grid-cols-1 lg:gap-5">
+				<section className="space-y-4" aria-label="Task list">
+					<p className="text-muted-foreground text-sm">
+						{tasks.length} {tasks.length === 1 ? "task" : "tasks"}
+					</p>
+					<ul className="grid list-none gap-4 p-0 sm:grid-cols-1 lg:gap-5">
 					{tasks.map((task: Task) => (
 						<li key={task.id}>
 							<TaskItem
@@ -146,7 +199,8 @@ function TaskList() {
 							/>
 						</li>
 					))}
-				</ul>
+					</ul>
+				</section>
 			)}
 
 			<TaskFormDialog

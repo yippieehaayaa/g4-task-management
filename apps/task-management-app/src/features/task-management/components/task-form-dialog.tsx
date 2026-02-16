@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import {
 	Dialog,
 	DialogContent,
+	DialogDescription,
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
@@ -119,15 +120,20 @@ function TaskFormDialog({
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent className="sm:max-w-md">
-				<DialogHeader>
+			<DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-md">
+				<DialogHeader className="space-y-1.5">
 					<DialogTitle>{isEdit ? "Edit task" : "New task"}</DialogTitle>
+					<DialogDescription>
+						{isEdit
+							? "Update the task details below."
+							: "Add a new task with title, status, and optional due date."}
+					</DialogDescription>
 				</DialogHeader>
-				<form onSubmit={handleSubmit} noValidate className="space-y-4">
+				<form onSubmit={handleSubmit} noValidate className="space-y-5 pt-1">
 					<div className="space-y-2">
 						<Label
 							htmlFor="task-title"
-							className="after:content-['*'] after:ml-0.5 after:text-destructive"
+							className="after:ml-0.5 after:content-['*'] after:text-destructive"
 						>
 							Title
 						</Label>
@@ -213,7 +219,7 @@ function TaskFormDialog({
 						/>
 					</div>
 
-					<DialogFooter className="flex-wrap gap-2">
+					<DialogFooter className="flex-wrap gap-2 pt-2">
 						<Button
 							type="button"
 							variant="outline"

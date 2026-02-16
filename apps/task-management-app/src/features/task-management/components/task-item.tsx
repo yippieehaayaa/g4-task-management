@@ -1,4 +1,4 @@
-import { PencilIcon, Trash2Icon } from "lucide-react";
+import { CalendarIcon, PencilIcon, Trash2Icon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
 	Card,
@@ -41,6 +41,12 @@ const priorityVariant: Record<Task["priority"], "ghost" | "secondary" | "destruc
 	HIGH: "destructive",
 };
 
+const priorityBorderClass: Record<Task["priority"], string> = {
+	LOW: "border-l-muted",
+	MEDIUM: "border-l-primary/50",
+	HIGH: "border-l-destructive",
+};
+
 function formatDate(value: string | null): string {
 	if (!value) return "";
 	try {
@@ -61,8 +67,13 @@ function TaskItem({ task, onToggleComplete, onEdit, onDelete }: TaskItemProps) {
 
 	return (
 		<>
-			<Card className="transition-shadow hover:shadow-md">
-				<CardHeader className="flex flex-row items-start gap-3 gap-y-2 py-4 sm:py-5">
+			<Card
+				className={cn(
+					"overflow-hidden border-l-4 transition-shadow hover:shadow-md",
+					priorityBorderClass[task.priority],
+				)}
+			>
+				<CardHeader className="flex flex-row items-start gap-4 py-5 sm:py-6">
 					<div className="flex shrink-0 items-center pt-0.5">
 						<Checkbox
 							checked={isDone}
@@ -70,7 +81,7 @@ function TaskItem({ task, onToggleComplete, onEdit, onDelete }: TaskItemProps) {
 							aria-label={isDone ? "Mark as incomplete" : "Mark as complete"}
 						/>
 					</div>
-					<div className="min-w-0 flex-1 space-y-1">
+					<div className="min-w-0 flex-1 space-y-1.5">
 						<h3
 							className={cn(
 								"font-medium leading-tight",
@@ -82,14 +93,14 @@ function TaskItem({ task, onToggleComplete, onEdit, onDelete }: TaskItemProps) {
 						{task.description ? (
 							<p
 								className={cn(
-									"text-muted-foreground text-sm line-clamp-2",
+									"text-muted-foreground text-sm leading-relaxed line-clamp-2",
 									isDone && "line-through",
 								)}
 							>
 								{task.description}
 							</p>
 						) : null}
-						<div className="flex flex-wrap items-center gap-2 pt-1">
+						<div className="flex flex-wrap items-center gap-x-2 gap-y-1.5 pt-1">
 							<Badge variant={statusVariant[task.status]} className="capitalize">
 								{task.status.replace(/_/g, " ").toLowerCase()}
 							</Badge>
@@ -97,34 +108,35 @@ function TaskItem({ task, onToggleComplete, onEdit, onDelete }: TaskItemProps) {
 								{task.priority.charAt(0) + task.priority.slice(1).toLowerCase()}
 							</Badge>
 							{task.dueDate ? (
-								<span className="text-muted-foreground text-xs">
+								<span className="text-muted-foreground inline-flex items-center gap-1 text-xs">
+									<CalendarIcon className="size-3.5 shrink-0" aria-hidden />
 									Due {formatDate(task.dueDate)}
 								</span>
 							) : null}
 						</div>
 					</div>
 				</CardHeader>
-				<CardContent className="px-6 pb-2 pt-0">
+				<CardContent className="px-6 pb-0 pt-0">
 					{/* Spacer for layout when no extra content */}
 				</CardContent>
-				<CardFooter className="flex flex-wrap justify-end gap-2 border-t px-4 py-3 sm:px-6">
+				<CardFooter className="flex flex-wrap justify-end gap-2 border-t px-6 py-3 sm:py-4">
 					<Button
 						variant="ghost"
 						size="sm"
-						className="min-h-11 min-w-11 touch-manipulation sm:min-h-9 sm:min-w-0"
+						className="min-h-10 min-w-10 touch-manipulation sm:min-h-9 sm:min-w-9"
 						onClick={() => onEdit?.(task)}
 						aria-label="Edit task"
 					>
-						<PencilIcon className="size-4 shrink-0" />
+						<PencilIcon className="size-4 shrink-0" aria-hidden />
 					</Button>
 					<Button
 						variant="ghost"
 						size="sm"
-						className="min-h-11 min-w-11 touch-manipulation text-destructive hover:bg-destructive/10 hover:text-destructive sm:min-h-9 sm:min-w-0"
+						className="min-h-10 min-w-10 touch-manipulation text-destructive hover:bg-destructive/10 hover:text-destructive sm:min-h-9 sm:min-w-9"
 						onClick={() => setDeleteOpen(true)}
 						aria-label="Delete task"
 					>
-						<Trash2Icon className="size-4 shrink-0" />
+						<Trash2Icon className="size-4 shrink-0" aria-hidden />
 					</Button>
 				</CardFooter>
 			</Card>

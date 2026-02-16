@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { LogIn } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -56,15 +57,22 @@ function LoginForm({ onSubmit, isSubmitting = false }: LoginFormProps) {
 	}
 
 	return (
-		<Card className="mx-auto w-full max-w-md">
-			<CardHeader className="space-y-1">
-				<CardTitle>Log in</CardTitle>
-				<CardDescription>
-					Enter your credentials to access your account.
-				</CardDescription>
+		<Card className="mx-auto w-full max-w-md border shadow-sm px-5 pt-6 pb-2 sm:px-6 sm:pt-8 sm:pb-4">
+			<CardHeader className="space-y-1.5 pb-5 px-0 pt-0 sm:pb-6">
+				<div className="flex items-center gap-3">
+					<div className="flex size-10 shrink-0 items-center justify-center rounded-lg border bg-muted/50">
+						<LogIn className="text-muted-foreground size-5" />
+					</div>
+					<div className="min-w-0 space-y-1">
+						<CardTitle className="text-xl">Log in</CardTitle>
+						<CardDescription>
+							Enter your credentials to access your account.
+						</CardDescription>
+					</div>
+				</div>
 			</CardHeader>
 			<form onSubmit={handleSubmit} noValidate>
-				<CardContent className="space-y-4">
+				<CardContent className="space-y-5 px-0 pt-0 pb-0 sm:space-y-6">
 					<FormField
 						id="login-username"
 						label="Username"
@@ -88,8 +96,8 @@ function LoginForm({ onSubmit, isSubmitting = false }: LoginFormProps) {
 						required
 					/>
 				</CardContent>
-				<CardFooter className="flex flex-col gap-4">
-					<Button type="submit" className="w-full" disabled={isSubmitting}>
+				<CardFooter className="flex flex-col gap-5 px-0 pt-6 pb-0 sm:gap-6 sm:pt-8">
+					<Button type="submit" className="w-full min-h-10" disabled={isSubmitting}>
 						{isSubmitting ? "Signing in…" : "Sign in"}
 					</Button>
 					<p className="text-muted-foreground text-center text-sm">
