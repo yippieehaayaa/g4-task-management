@@ -1,0 +1,21 @@
+meta {
+  name: Change Email
+  type: http
+  seq: 6
+}
+
+patch {
+  url: {{baseUrl}}/iam/auth/email
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "newEmail": "newemail@g4.dev"
+  }
+}

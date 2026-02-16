@@ -1,0 +1,26 @@
+meta {
+  name: Create Role
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/iam/roles
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "name": "editor",
+    "description": "Can read and write identities"
+  }
+}
+
+script:post-response {
+  bru.setEnvVar("roleId", res.body.data.id);
+}

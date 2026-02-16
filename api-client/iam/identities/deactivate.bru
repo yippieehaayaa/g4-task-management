@@ -1,0 +1,15 @@
+meta {
+  name: Deactivate Identity
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/iam/identities/{{identityId}}/deactivate
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}

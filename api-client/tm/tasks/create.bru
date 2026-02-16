@@ -1,0 +1,31 @@
+meta {
+  name: Create Task
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/tm/tasks
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "title": "My task",
+    "description": "Optional description",
+    "status": "TODO",
+    "priority": "MEDIUM",
+    "dueDate": "2025-12-31"
+  }
+}
+
+script:post-response {
+  if (res.body?.data?.id) {
+    bru.setEnvVar("taskId", res.body.data.id);
+  }
+}

@@ -1,0 +1,21 @@
+meta {
+  name: Add Policies to Role
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/iam/roles/{{roleId}}/policies
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "policyIds": ["{{policyId}}"]
+  }
+}

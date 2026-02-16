@@ -1,0 +1,24 @@
+meta {
+  name: Update Policy
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{baseUrl}}/iam/policies/{{policyId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "description": "Updated description",
+    "effect": "ALLOW",
+    "actions": ["custom:resource:read"],
+    "resources": ["*"]
+  }
+}

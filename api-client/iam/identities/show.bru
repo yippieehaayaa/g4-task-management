@@ -1,0 +1,15 @@
+meta {
+  name: Show Identity
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/iam/identities/{{identityId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}

@@ -1,0 +1,22 @@
+meta {
+  name: Update Group
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{baseUrl}}/iam/groups/{{groupId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "name": "developers",
+    "description": "Updated description"
+  }
+}

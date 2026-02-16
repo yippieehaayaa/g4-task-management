@@ -1,0 +1,21 @@
+meta {
+  name: Remove Identities from Group
+  type: http
+  seq: 7
+}
+
+delete {
+  url: {{baseUrl}}/iam/groups/{{groupId}}/identities
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "identityIds": ["{{identityId}}"]
+  }
+}

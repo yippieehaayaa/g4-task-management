@@ -1,0 +1,23 @@
+meta {
+  name: Update Task
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{baseUrl}}/tm/tasks/{{taskId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "title": "Updated title",
+    "status": "IN_PROGRESS",
+    "priority": "HIGH"
+  }
+}

@@ -1,0 +1,20 @@
+meta {
+  name: List Tasks
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/tm/tasks
+  body: none
+  auth: bearer
+}
+
+params:query {
+  page: 1
+  limit: 20
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}

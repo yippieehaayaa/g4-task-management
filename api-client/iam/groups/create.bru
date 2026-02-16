@@ -1,0 +1,26 @@
+meta {
+  name: Create Group
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/iam/groups
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "name": "developers",
+    "description": "Developer group"
+  }
+}
+
+script:post-response {
+  bru.setEnvVar("groupId", res.body.data.id);
+}
