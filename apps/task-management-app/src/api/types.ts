@@ -1,4 +1,3 @@
-// ── Response Wrappers ────────────────────────────────────────────────────────
 
 export interface ApiResponse<T> {
 	data: T;
@@ -15,15 +14,12 @@ export interface PaginationMeta {
 	total: number;
 }
 
-// ── Common Params ────────────────────────────────────────────────────────────
 
 export interface PaginationParams {
 	page?: number;
 	limit?: number;
 	search?: string;
 }
-
-// ── Auth ─────────────────────────────────────────────────────────────────────
 
 export interface AuthTokens {
 	accessToken: string;
@@ -52,7 +48,6 @@ export interface ChangeEmailInput {
 	newEmail: string;
 }
 
-// ── Identity ─────────────────────────────────────────────────────────────────
 
 export type IdentityStatus =
 	| "ACTIVE"
@@ -89,8 +84,6 @@ export interface UpdateIdentityInput {
 	active?: boolean;
 }
 
-// ── Role ─────────────────────────────────────────────────────────────────────
-
 export interface Role {
 	id: string;
 	name: string;
@@ -110,8 +103,6 @@ export interface UpdateRoleInput {
 	name?: string;
 	description?: string;
 }
-
-// ── Policy ───────────────────────────────────────────────────────────────────
 
 export type PolicyEffect = "ALLOW" | "DENY";
 
@@ -142,8 +133,6 @@ export interface UpdatePolicyInput {
 	resources?: string[];
 }
 
-// ── Group ────────────────────────────────────────────────────────────────────
-
 export interface Group {
 	id: string;
 	name: string;
@@ -164,8 +153,6 @@ export interface UpdateGroupInput {
 	description?: string;
 }
 
-// ── Session ──────────────────────────────────────────────────────────────────
-
 export interface Session {
 	id: string;
 	identityId: string;
@@ -175,8 +162,6 @@ export interface Session {
 	revokedAt?: string;
 	createdAt: string;
 }
-
-// ── OTP ──────────────────────────────────────────────────────────────────────
 
 export type OtpPurpose =
 	| "REGISTRATION"
@@ -195,8 +180,6 @@ export interface Otp {
 	attempts: number;
 	createdAt: string;
 }
-
-// ── Task ─────────────────────────────────────────────────────────────────────
 
 export type TaskStatus = "TODO" | "IN_PROGRESS" | "DONE";
 

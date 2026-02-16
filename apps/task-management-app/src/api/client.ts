@@ -1,6 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:4000";
-
-// ── Token Store ──────────────────────────────────────────────────────────────
+const API_URL = import.meta.env.VITE_API_URL;
 
 let accessToken: string | null = null;
 let refreshToken: string | null = null;
@@ -24,8 +22,6 @@ export function clearTokens() {
 	refreshToken = null;
 }
 
-// ── Error ────────────────────────────────────────────────────────────────────
-
 export class ApiError extends Error {
 	constructor(
 		public readonly status: number,
@@ -36,8 +32,6 @@ export class ApiError extends Error {
 		this.name = "ApiError";
 	}
 }
-
-// ── Helpers ──────────────────────────────────────────────────────────────────
 
 function buildQueryString(params?: Record<string, unknown>): string {
 	if (!params) return "";
@@ -77,8 +71,6 @@ async function attemptRefresh(): Promise<boolean> {
 	return refreshPromise;
 }
 
-// ── Core Request ─────────────────────────────────────────────────────────────
-
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
 	const headers: Record<string, string> = {};
 
@@ -115,8 +107,6 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
 	if (response.status === 204) return undefined as T;
 	return response.json() as Promise<T>;
 }
-
-// ── Public API ───────────────────────────────────────────────────────────────
 
 export const api = {
 	get: <T>(path: string, params?: Record<string, unknown>) =>

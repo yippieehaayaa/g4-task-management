@@ -1,8 +1,5 @@
-// ── Client ───────────────────────────────────────────────────────────────────
 
 export { api, ApiError, clearTokens, getAccessToken, getRefreshToken, setTokens } from "./client";
-
-// ── Types ────────────────────────────────────────────────────────────────────
 
 export type {
 	ApiResponse,
@@ -40,8 +37,6 @@ export type {
 	UpdateRoleInput,
 	UpdateTaskInput,
 } from "./types";
-
-// ── IAM ──────────────────────────────────────────────────────────────────────
 
 export {
 	adminKeys,
@@ -88,8 +83,6 @@ export {
 	useUpdatePolicy,
 	useUpdateRole,
 } from "./iam";
-
-// ── Task Management ──────────────────────────────────────────────────────────
 
 export {
 	taskKeys,
