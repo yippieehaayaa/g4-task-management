@@ -4,16 +4,15 @@ export { TaskItem } from "./components/task-item";
 export { TaskList } from "./components/task-list";
 export { useLocalTasks } from "./hooks/use-local-tasks";
 export {
-	createTaskSchema,
-	editTaskSchema,
 	type CreateTaskFormValues,
+	createTaskSchema,
 	type EditTaskFormValues,
+	editTaskSchema,
 } from "./schemas";
 export {
 	TASK_PRIORITIES,
 	TASK_STATUSES,
 	type Task,
-	type TaskFilters,
 	type TaskPriority,
 	type TaskStatus,
 } from "./types";

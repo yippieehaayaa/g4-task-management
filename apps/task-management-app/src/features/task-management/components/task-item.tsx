@@ -30,15 +30,15 @@ type TaskItemProps = {
 };
 
 const statusVariant: Record<Task["status"], "secondary" | "default" | "outline"> = {
-	todo: "secondary",
-	in_progress: "default",
-	done: "outline",
+	TODO: "secondary",
+	IN_PROGRESS: "default",
+	DONE: "outline",
 };
 
 const priorityVariant: Record<Task["priority"], "ghost" | "secondary" | "destructive"> = {
-	low: "ghost",
-	medium: "secondary",
-	high: "destructive",
+	LOW: "ghost",
+	MEDIUM: "secondary",
+	HIGH: "destructive",
 };
 
 function formatDate(value: string | null): string {
@@ -57,7 +57,7 @@ function formatDate(value: string | null): string {
 
 function TaskItem({ task, onToggleComplete, onEdit, onDelete }: TaskItemProps) {
 	const [deleteOpen, setDeleteOpen] = useState(false);
-	const isDone = task.status === "done";
+	const isDone = task.status === "DONE";
 
 	return (
 		<>
@@ -91,10 +91,10 @@ function TaskItem({ task, onToggleComplete, onEdit, onDelete }: TaskItemProps) {
 						) : null}
 						<div className="flex flex-wrap items-center gap-2 pt-1">
 							<Badge variant={statusVariant[task.status]} className="capitalize">
-								{task.status.replace("_", " ")}
+								{task.status.replace(/_/g, " ").toLowerCase()}
 							</Badge>
 							<Badge variant={priorityVariant[task.priority]}>
-								{task.priority}
+								{task.priority.charAt(0) + task.priority.slice(1).toLowerCase()}
 							</Badge>
 							{task.dueDate ? (
 								<span className="text-muted-foreground text-xs">

@@ -77,7 +77,7 @@ function useLocalTasks(initialTasks: Task[] = []) {
 
 	const toggleTaskStatus = useCallback((task: Task) => {
 		const nextStatus =
-			task.status === "done" ? "todo" : "done";
+			task.status === "DONE" ? "TODO" : "DONE";
 		setTasks((prev) =>
 			prev.map((t) =>
 				t.id === task.id

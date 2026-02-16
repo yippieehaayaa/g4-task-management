@@ -35,8 +35,8 @@ type TaskFormDialogProps = {
 const defaultCreateValues: CreateTaskFormValues = {
 	title: "",
 	description: "",
-	status: "todo",
-	priority: "medium",
+	status: "TODO",
+	priority: "MEDIUM",
 	dueDate: undefined,
 };
 
@@ -176,7 +176,7 @@ function TaskFormDialog({
 								<SelectContent>
 									{TASK_STATUSES.map((s) => (
 										<SelectItem key={s} value={s}>
-											{s.replace("_", " ")}
+											{s.replace(/_/g, " ").toLowerCase()}
 										</SelectItem>
 									))}
 								</SelectContent>
@@ -194,7 +194,7 @@ function TaskFormDialog({
 								<SelectContent>
 									{TASK_PRIORITIES.map((p) => (
 										<SelectItem key={p} value={p}>
-											{p}
+											{p.charAt(0) + p.slice(1).toLowerCase()}
 										</SelectItem>
 									))}
 								</SelectContent>

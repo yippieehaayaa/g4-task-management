@@ -47,7 +47,7 @@ function TaskFilters({ value, onChange }: TaskFiltersProps) {
 						<SelectItem value="all">All statuses</SelectItem>
 						{TASK_STATUSES.map((s) => (
 							<SelectItem key={s} value={s}>
-								{s.replace("_", " ")}
+								{s.replace(/_/g, " ").toLowerCase()}
 							</SelectItem>
 						))}
 					</SelectContent>
@@ -68,7 +68,7 @@ function TaskFilters({ value, onChange }: TaskFiltersProps) {
 						<SelectItem value="all">All priorities</SelectItem>
 						{TASK_PRIORITIES.map((p) => (
 							<SelectItem key={p} value={p}>
-								{p}
+								{p.charAt(0) + p.slice(1).toLowerCase()}
 							</SelectItem>
 						))}
 					</SelectContent>
