@@ -1,4 +1,5 @@
 import { QueryClient } from "@tanstack/react-query";
+import { apiClient } from "@/api/api-client";
 
 export function getContext() {
 	const queryClient = new QueryClient({
@@ -15,5 +16,6 @@ export function getContext() {
 	});
 	return {
 		queryClient,
+		apiClient,
 	};
 }

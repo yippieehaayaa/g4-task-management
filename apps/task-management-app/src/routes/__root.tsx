@@ -1,4 +1,5 @@
 import type { QueryClient } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import {
 	createRootRouteWithContext,
 	HeadContent,
@@ -6,11 +7,15 @@ import {
 	Scripts,
 } from "@tanstack/react-router";
 import { Provider } from "react-redux";
+import { AuthProvider } from "@/context/auth";
 import { store } from "@/store";
 import appCss from "../styles.css?url";
 
+import type { apiClient } from "@/api/api-client";
+
 interface MyRouterContext {
 	queryClient: QueryClient;
+	apiClient: typeof apiClient;
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
@@ -53,9 +58,15 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
+	const { queryClient } = Route.useRouteContext();
+
 	return (
-		<Provider store={store}>
-			<Outlet />
-		</Provider>
+		<QueryClientProvider client={queryClient}>
+			<AuthProvider>
+				<Provider store={store}>
+					<Outlet />
+				</Provider>
+			</AuthProvider>
+		</QueryClientProvider>
 	);
 }
