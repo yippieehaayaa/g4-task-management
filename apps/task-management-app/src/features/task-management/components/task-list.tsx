@@ -1,27 +1,28 @@
-import { PlusIcon, ListTodoIcon } from "lucide-react";
+import { ListTodoIcon, PlusIcon } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useAppDispatch, useAppSelector } from "@/store";
+import {
+	selectFilteredTasks,
+	selectTasksFilters,
+} from "@/store/selectors/tasksSelectors";
+import {
+	addTask,
+	deleteTask,
+	setFilters,
+	toggleTaskStatus,
+	updateTask,
+} from "@/store/slices/tasksSlice";
+import type { CreateTaskFormValues, EditTaskFormValues } from "../schemas";
+import type { Task } from "../types";
 import { TaskFilters } from "./task-filters";
 import { TaskFormDialog } from "./task-form-dialog";
 import { TaskItem } from "./task-item";
-import { useLocalTasks } from "../hooks/use-local-tasks";
-import type { Task } from "../types";
-import type { CreateTaskFormValues, EditTaskFormValues } from "../schemas";
 
-type TaskListProps = {
-	initialTasks?: Task[];
-};
-
-function TaskList({ initialTasks = [] }: TaskListProps) {
-	const {
-		tasks,
-		filters,
-		setFilters,
-		addTask,
-		updateTask,
-		deleteTask,
-		toggleTaskStatus,
-	} = useLocalTasks(initialTasks);
+function TaskList() {
+	const dispatch = useAppDispatch();
+	const tasks = useAppSelector(selectFilteredTasks);
+	const filters = useAppSelector(selectTasksFilters);
 
 	const [formOpen, setFormOpen] = useState(false);
 	const [editingTask, setEditingTask] = useState<Task | null>(null);
@@ -29,7 +30,7 @@ function TaskList({ initialTasks = [] }: TaskListProps) {
 
 	function handleCreate(values: CreateTaskFormValues) {
 		setIsSubmitting(true);
-		addTask(values);
+		dispatch(addTask(values));
 		setIsSubmitting(false);
 		setFormOpen(false);
 	}
@@ -37,7 +38,7 @@ function TaskList({ initialTasks = [] }: TaskListProps) {
 	function handleEdit(values: EditTaskFormValues) {
 		if (!editingTask) return;
 		setIsSubmitting(true);
-		updateTask(editingTask.id, values);
+		dispatch(updateTask({ id: editingTask.id, values }));
 		setIsSubmitting(false);
 		setEditingTask(null);
 	}
@@ -66,7 +67,7 @@ function TaskList({ initialTasks = [] }: TaskListProps) {
 				</Button>
 			</div>
 
-			<TaskFilters value={filters} onChange={setFilters} />
+			<TaskFilters value={filters} onChange={(f) => dispatch(setFilters(f))} />
 
 			{tasks.length === 0 ? (
 				<div className="bg-muted/50 flex flex-col items-center justify-center rounded-lg border border-dashed py-16 text-center">
@@ -77,10 +78,7 @@ function TaskList({ initialTasks = [] }: TaskListProps) {
 					<p className="text-muted-foreground mb-4 max-w-sm text-sm">
 						Create a task to get started, or adjust your filters.
 					</p>
-					<Button
-						variant="outline"
-						onClick={() => setFormOpen(true)}
-					>
+					<Button variant="outline" onClick={() => setFormOpen(true)}>
 						<PlusIcon className="size-4" />
 						Add task
 					</Button>
@@ -91,12 +89,12 @@ function TaskList({ initialTasks = [] }: TaskListProps) {
 						<li key={task.id}>
 							<TaskItem
 								task={task}
-								onToggleComplete={toggleTaskStatus}
+								onToggleComplete={(t) => dispatch(toggleTaskStatus(t))}
 								onEdit={(t) => {
 									setEditingTask(t);
 									setFormOpen(true);
 								}}
-								onDelete={(t) => deleteTask(t.id)}
+								onDelete={(t) => dispatch(deleteTask(t.id))}
 							/>
 						</li>
 					))}

@@ -2,7 +2,6 @@ export { TaskFilters } from "./components/task-filters";
 export { TaskFormDialog } from "./components/task-form-dialog";
 export { TaskItem } from "./components/task-item";
 export { TaskList } from "./components/task-list";
-export { useLocalTasks } from "./hooks/use-local-tasks";
 export {
 	type CreateTaskFormValues,
 	createTaskSchema,

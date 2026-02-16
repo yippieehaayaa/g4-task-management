@@ -5,6 +5,8 @@ import {
 	Outlet,
 	Scripts,
 } from "@tanstack/react-router";
+import { Provider } from "react-redux";
+import { store } from "@/store";
 import appCss from "../styles.css?url";
 
 interface MyRouterContext {
@@ -51,5 +53,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
-	return <Outlet />;
+	return (
+		<Provider store={store}>
+			<Outlet />
+		</Provider>
+	);
 }
