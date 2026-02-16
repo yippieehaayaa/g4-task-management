@@ -62,7 +62,7 @@ function RegisterForm({ onSubmit, isSubmitting = false }: RegisterFormProps) {
 	}
 
 	return (
-		<Card className="w-full max-w-md">
+		<Card className="mx-auto w-full max-w-md">
 			<CardHeader className="space-y-1">
 				<CardTitle>Create an account</CardTitle>
 				<CardDescription>Enter your details to register.</CardDescription>

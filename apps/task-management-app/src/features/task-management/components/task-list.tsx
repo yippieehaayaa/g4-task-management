@@ -70,7 +70,7 @@ function TaskList() {
 			<TaskFilters value={filters} onChange={(f) => dispatch(setFilters(f))} />
 
 			{tasks.length === 0 ? (
-				<div className="bg-muted/50 flex flex-col items-center justify-center rounded-lg border border-dashed py-16 text-center">
+				<div className="flex flex-col items-center justify-center rounded-lg border border-dashed bg-muted/50 px-4 py-16 text-center">
 					<ListTodoIcon className="text-muted-foreground mb-4 size-12" />
 					<p className="text-muted-foreground mb-2 text-sm font-medium">
 						No tasks yet

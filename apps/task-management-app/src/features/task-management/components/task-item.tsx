@@ -107,23 +107,24 @@ function TaskItem({ task, onToggleComplete, onEdit, onDelete }: TaskItemProps) {
 				<CardContent className="px-6 pb-2 pt-0">
 					{/* Spacer for layout when no extra content */}
 				</CardContent>
-				<CardFooter className="flex justify-end gap-2 border-t px-6 py-3">
+				<CardFooter className="flex flex-wrap justify-end gap-2 border-t px-4 py-3 sm:px-6">
 					<Button
 						variant="ghost"
 						size="sm"
+						className="min-h-11 min-w-11 touch-manipulation sm:min-h-9 sm:min-w-0"
 						onClick={() => onEdit?.(task)}
 						aria-label="Edit task"
 					>
-						<PencilIcon className="size-4" />
+						<PencilIcon className="size-4 shrink-0" />
 					</Button>
 					<Button
 						variant="ghost"
 						size="sm"
-						className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+						className="min-h-11 min-w-11 touch-manipulation text-destructive hover:bg-destructive/10 hover:text-destructive sm:min-h-9 sm:min-w-0"
 						onClick={() => setDeleteOpen(true)}
 						aria-label="Delete task"
 					>
-						<Trash2Icon className="size-4" />
+						<Trash2Icon className="size-4 shrink-0" />
 					</Button>
 				</CardFooter>
 			</Card>

@@ -37,7 +37,12 @@ function LogoutButton({
 		return (
 			<AlertDialog>
 				<AlertDialogTrigger asChild>
-					<Button variant={variant} size={size} disabled={isLoading}>
+					<Button
+						variant={variant}
+						size={size}
+						disabled={isLoading}
+						aria-busy={isLoading}
+					>
 						{children ?? (
 							<>
 								<LogOut className="size-4" aria-hidden />
@@ -74,6 +79,7 @@ function LogoutButton({
 			variant={variant}
 			size={size}
 			disabled={isLoading}
+			aria-busy={isLoading}
 			onClick={onLogout}
 		>
 			{children ?? (

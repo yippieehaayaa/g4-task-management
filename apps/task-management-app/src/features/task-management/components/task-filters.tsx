@@ -26,7 +26,7 @@ function TaskFilters({ value, onChange }: TaskFiltersProps) {
 					onChange={(e) =>
 						onChange({ ...value, search: e.target.value })
 					}
-					className="pl-9 w-full"
+					className="w-full pl-9"
 					aria-label="Search tasks"
 				/>
 			</div>

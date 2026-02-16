@@ -35,7 +35,7 @@ function FormField({
 				htmlFor={id}
 				className={
 					required
-						? "after:content-['*'] after:ml-0.5 after:text-destructive"
+						? "after:content-['*'] after:ms-0.5 after:text-destructive"
 						: undefined
 				}
 			>

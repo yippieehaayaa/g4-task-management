@@ -56,7 +56,7 @@ function LoginForm({ onSubmit, isSubmitting = false }: LoginFormProps) {
 	}
 
 	return (
-		<Card className="w-full max-w-md">
+		<Card className="mx-auto w-full max-w-md">
 			<CardHeader className="space-y-1">
 				<CardTitle>Log in</CardTitle>
 				<CardDescription>

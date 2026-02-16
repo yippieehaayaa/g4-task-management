@@ -165,7 +165,7 @@ function TaskFormDialog({
 
 					<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
 						<div className="space-y-2">
-							<Label>Status</Label>
+							<Label htmlFor="task-status">Status</Label>
 							<Select
 								value={values.status}
 								onValueChange={handleStatusChange}
@@ -183,7 +183,7 @@ function TaskFormDialog({
 							</Select>
 						</div>
 						<div className="space-y-2">
-							<Label>Priority</Label>
+							<Label htmlFor="task-priority">Priority</Label>
 							<Select
 								value={values.priority}
 								onValueChange={handlePriorityChange}
@@ -213,7 +213,7 @@ function TaskFormDialog({
 						/>
 					</div>
 
-					<DialogFooter className="gap-2 sm:gap-0">
+					<DialogFooter className="flex-wrap gap-2">
 						<Button
 							type="button"
 							variant="outline"
