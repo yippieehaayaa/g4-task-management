@@ -6,10 +6,7 @@ import { groupKeys } from "../../queries/groups";
 export function useRemoveIdentitiesFromGroup() {
 	const queryClient = useQueryClient();
 	return useMutation({
-		mutationFn: ({
-			id,
-			identityIds,
-		}: { id: string; identityIds: string[] }) =>
+		mutationFn: ({ id, identityIds }: { id: string; identityIds: string[] }) =>
 			api.delete<ApiResponse<Group>>(`/iam/groups/${id}/identities`, {
 				identityIds,
 			}),

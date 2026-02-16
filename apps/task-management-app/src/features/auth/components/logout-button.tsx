@@ -50,8 +50,8 @@ function LogoutButton({
 					<AlertDialogHeader>
 						<AlertDialogTitle>Log out</AlertDialogTitle>
 						<AlertDialogDescription>
-							Are you sure you want to log out? You will need to sign in again to
-							access your account.
+							Are you sure you want to log out? You will need to sign in again
+							to access your account.
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>

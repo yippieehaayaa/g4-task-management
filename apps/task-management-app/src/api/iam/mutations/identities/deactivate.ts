@@ -7,9 +7,7 @@ export function useDeactivateIdentity() {
 	const queryClient = useQueryClient();
 	return useMutation({
 		mutationFn: (id: string) =>
-			api.post<ApiResponse<Identity>>(
-				`/iam/identities/${id}/deactivate`,
-			),
+			api.post<ApiResponse<Identity>>(`/iam/identities/${id}/deactivate`),
 		onSuccess: (_data, id) => {
 			queryClient.invalidateQueries({
 				queryKey: identityKeys.lists(),

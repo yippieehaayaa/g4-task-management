@@ -1,4 +1,6 @@
 import { Link } from "@tanstack/react-router";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
 	Card,
 	CardContent,
@@ -7,10 +9,8 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { type LoginFormValues, loginSchema } from "../schemas";
 import { FormField } from "./form-field";
-import { loginSchema, type LoginFormValues } from "../schemas";
-import { useState } from "react";
 
 type LoginFormProps = {
 	onSubmit?: (values: LoginFormValues) => void;
@@ -18,13 +18,15 @@ type LoginFormProps = {
 };
 
 const defaultValues: LoginFormValues = {
-	email: "",
+	username: "",
 	password: "",
 };
 
 function LoginForm({ onSubmit, isSubmitting = false }: LoginFormProps) {
 	const [values, setValues] = useState<LoginFormValues>(defaultValues);
-	const [errors, setErrors] = useState<Partial<Record<keyof LoginFormValues, string>>>({});
+	const [errors, setErrors] = useState<
+		Partial<Record<keyof LoginFormValues, string>>
+	>({});
 
 	function handleChange(field: keyof LoginFormValues) {
 		return (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,19 +59,21 @@ function LoginForm({ onSubmit, isSubmitting = false }: LoginFormProps) {
 		<Card className="w-full max-w-md">
 			<CardHeader className="space-y-1">
 				<CardTitle>Log in</CardTitle>
-				<CardDescription>Enter your credentials to access your account.</CardDescription>
+				<CardDescription>
+					Enter your credentials to access your account.
+				</CardDescription>
 			</CardHeader>
 			<form onSubmit={handleSubmit} noValidate>
 				<CardContent className="space-y-4">
 					<FormField
-						id="login-email"
-						label="Email"
-						type="email"
-						placeholder="name@example.com"
-						autoComplete="email"
-						value={values.email}
-						onChange={handleChange("email")}
-						error={errors.email}
+						id="login-username"
+						label="Username"
+						type="text"
+						placeholder="Username"
+						autoComplete="username"
+						value={values.username}
+						onChange={handleChange("username")}
+						error={errors.username}
 						required
 					/>
 					<FormField
@@ -90,7 +94,10 @@ function LoginForm({ onSubmit, isSubmitting = false }: LoginFormProps) {
 					</Button>
 					<p className="text-muted-foreground text-center text-sm">
 						Don&apos;t have an account?{" "}
-						<Link to="/register" className="text-primary underline-offset-4 hover:underline">
+						<Link
+							to="/register"
+							className="text-primary underline-offset-4 hover:underline"
+						>
 							Register
 						</Link>
 					</p>

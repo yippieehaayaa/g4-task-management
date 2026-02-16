@@ -6,6 +6,5 @@ import { authKeys } from "./keys";
 export const sessionsQuery = () =>
 	queryOptions({
 		queryKey: authKeys.sessions(),
-		queryFn: () =>
-			api.get<ApiResponse<Session[]>>("/iam/auth/sessions"),
+		queryFn: () => api.get<ApiResponse<Session[]>>("/iam/auth/sessions"),
 	});

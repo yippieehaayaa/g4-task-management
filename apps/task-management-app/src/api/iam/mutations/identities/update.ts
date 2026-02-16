@@ -1,6 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../../../client";
-import type { ApiResponse, Identity, UpdateIdentityInput } from "../../../types";
+import type {
+	ApiResponse,
+	Identity,
+	UpdateIdentityInput,
+} from "../../../types";
 import { identityKeys } from "../../queries/identities";
 
 export function useUpdateIdentity() {

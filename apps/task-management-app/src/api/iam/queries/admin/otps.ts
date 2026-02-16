@@ -7,7 +7,5 @@ export const otpsQuery = (identityId: string) =>
 	queryOptions({
 		queryKey: adminKeys.otps(identityId),
 		queryFn: () =>
-			api.get<ApiResponse<Otp[]>>(
-				`/iam/admin/identities/${identityId}/otps`,
-			),
+			api.get<ApiResponse<Otp[]>>(`/iam/admin/identities/${identityId}/otps`),
 	});

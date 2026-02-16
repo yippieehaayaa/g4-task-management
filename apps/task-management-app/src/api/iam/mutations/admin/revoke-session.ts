@@ -8,10 +8,11 @@ export function useAdminRevokeSession() {
 		mutationFn: ({
 			identityId,
 			sessionId,
-		}: { identityId: string; sessionId: string }) =>
-			api.delete(
-				`/iam/admin/identities/${identityId}/sessions/${sessionId}`,
-			),
+		}: {
+			identityId: string;
+			sessionId: string;
+		}) =>
+			api.delete(`/iam/admin/identities/${identityId}/sessions/${sessionId}`),
 		onSuccess: (_data, variables) => {
 			queryClient.invalidateQueries({
 				queryKey: adminKeys.sessions(variables.identityId),

@@ -5,10 +5,7 @@ import { roleKeys } from "../../queries/roles";
 export function useRemoveRoleFromIdentity() {
 	const queryClient = useQueryClient();
 	return useMutation({
-		mutationFn: ({
-			id,
-			identityId,
-		}: { id: string; identityId: string }) =>
+		mutationFn: ({ id, identityId }: { id: string; identityId: string }) =>
 			api.delete(`/iam/roles/${id}/identities`, { identityId }),
 		onSuccess: (_data, variables) => {
 			queryClient.invalidateQueries({

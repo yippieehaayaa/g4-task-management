@@ -1,10 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 import { api } from "../../../client";
-import type {
-	PaginatedResponse,
-	PaginationParams,
-	Role,
-} from "../../../types";
+import type { PaginatedResponse, PaginationParams, Role } from "../../../types";
 import { roleKeys } from "./keys";
 
 export const listQuery = (params?: PaginationParams) =>

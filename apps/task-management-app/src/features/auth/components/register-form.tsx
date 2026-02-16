@@ -1,4 +1,6 @@
 import { Link } from "@tanstack/react-router";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
 	Card,
 	CardContent,
@@ -7,10 +9,8 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { type RegisterFormValues, registerSchema } from "../schemas";
 import { FormField } from "./form-field";
-import { registerSchema, type RegisterFormValues } from "../schemas";
-import { useState } from "react";
 
 type RegisterFormProps = {
 	onSubmit?: (values: RegisterFormValues) => void;
@@ -18,6 +18,7 @@ type RegisterFormProps = {
 };
 
 const defaultValues: RegisterFormValues = {
+	username: "",
 	email: "",
 	password: "",
 	confirmPassword: "",
@@ -25,7 +26,9 @@ const defaultValues: RegisterFormValues = {
 
 function RegisterForm({ onSubmit, isSubmitting = false }: RegisterFormProps) {
 	const [values, setValues] = useState<RegisterFormValues>(defaultValues);
-	const [errors, setErrors] = useState<Partial<Record<keyof RegisterFormValues, string>>>({});
+	const [errors, setErrors] = useState<
+		Partial<Record<keyof RegisterFormValues, string>>
+	>({});
 
 	function handleChange(field: keyof RegisterFormValues) {
 		return (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,7 +41,11 @@ function RegisterForm({ onSubmit, isSubmitting = false }: RegisterFormProps) {
 
 	function handleSubmit(e: React.FormEvent) {
 		e.preventDefault();
-		const result = registerSchema.safeParse(values);
+		const toValidate = {
+			...values,
+			email: values.email?.trim() || undefined,
+		};
+		const result = registerSchema.safeParse(toValidate);
 		if (!result.success) {
 			const fieldErrors: Partial<Record<keyof RegisterFormValues, string>> = {};
 			for (const issue of result.error.issues) {
@@ -63,15 +70,25 @@ function RegisterForm({ onSubmit, isSubmitting = false }: RegisterFormProps) {
 			<form onSubmit={handleSubmit} noValidate>
 				<CardContent className="space-y-4">
 					<FormField
+						id="register-username"
+						label="Username"
+						type="text"
+						placeholder="Username"
+						autoComplete="username"
+						value={values.username}
+						onChange={handleChange("username")}
+						error={errors.username}
+						required
+					/>
+					<FormField
 						id="register-email"
-						label="Email"
+						label="Email (optional)"
 						type="email"
 						placeholder="name@example.com"
 						autoComplete="email"
-						value={values.email}
+						value={values.email ?? ""}
 						onChange={handleChange("email")}
 						error={errors.email}
-						required
 					/>
 					<FormField
 						id="register-password"
@@ -102,7 +119,10 @@ function RegisterForm({ onSubmit, isSubmitting = false }: RegisterFormProps) {
 					</Button>
 					<p className="text-muted-foreground text-center text-sm">
 						Already have an account?{" "}
-						<Link to="/login" className="text-primary underline-offset-4 hover:underline">
+						<Link
+							to="/login"
+							className="text-primary underline-offset-4 hover:underline"
+						>
 							Log in
 						</Link>
 					</p>

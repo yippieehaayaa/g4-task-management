@@ -1,4 +1,3 @@
-
 export interface ApiResponse<T> {
 	data: T;
 }
@@ -13,7 +12,6 @@ export interface PaginationMeta {
 	limit: number;
 	total: number;
 }
-
 
 export interface PaginationParams {
 	page?: number;
@@ -47,7 +45,6 @@ export interface ChangePasswordInput {
 export interface ChangeEmailInput {
 	newEmail: string;
 }
-
 
 export type IdentityStatus =
 	| "ACTIVE"

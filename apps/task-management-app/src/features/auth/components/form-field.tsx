@@ -12,7 +12,10 @@ type FormFieldProps = {
 	disabled?: boolean;
 	autoComplete?: string;
 	required?: boolean;
-} & Omit<React.ComponentProps<typeof Input>, "id" | "aria-invalid" | "aria-describedby">;
+} & Omit<
+	React.ComponentProps<typeof Input>,
+	"id" | "aria-invalid" | "aria-describedby"
+>;
 
 function FormField({
 	id,
@@ -28,7 +31,14 @@ function FormField({
 }: FormFieldProps) {
 	return (
 		<div className="space-y-2">
-			<Label htmlFor={id} className={required ? "after:content-['*'] after:ml-0.5 after:text-destructive" : undefined}>
+			<Label
+				htmlFor={id}
+				className={
+					required
+						? "after:content-['*'] after:ml-0.5 after:text-destructive"
+						: undefined
+				}
+			>
 				{label}
 			</Label>
 			<Input

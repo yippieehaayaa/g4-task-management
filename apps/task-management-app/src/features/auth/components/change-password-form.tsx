@@ -1,4 +1,6 @@
 import { Link } from "@tanstack/react-router";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
 	Card,
 	CardContent,
@@ -7,10 +9,11 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import {
+	type ChangePasswordFormValues,
+	changePasswordSchema,
+} from "../schemas";
 import { FormField } from "./form-field";
-import { changePasswordSchema, type ChangePasswordFormValues } from "../schemas";
-import { useState } from "react";
 
 type ChangePasswordFormProps = {
 	onSubmit?: (values: ChangePasswordFormValues) => void;
@@ -23,7 +26,10 @@ const defaultValues: ChangePasswordFormValues = {
 	confirmNewPassword: "",
 };
 
-function ChangePasswordForm({ onSubmit, isSubmitting = false }: ChangePasswordFormProps) {
+function ChangePasswordForm({
+	onSubmit,
+	isSubmitting = false,
+}: ChangePasswordFormProps) {
 	const [values, setValues] = useState<ChangePasswordFormValues>(defaultValues);
 	const [errors, setErrors] = useState<
 		Partial<Record<keyof ChangePasswordFormValues, string>>
@@ -107,7 +113,10 @@ function ChangePasswordForm({ onSubmit, isSubmitting = false }: ChangePasswordFo
 						{isSubmitting ? "Updating…" : "Update password"}
 					</Button>
 					<p className="text-muted-foreground text-center text-sm">
-						<Link to="/login" className="text-primary underline-offset-4 hover:underline">
+						<Link
+							to="/login"
+							className="text-primary underline-offset-4 hover:underline"
+						>
 							Back to log in
 						</Link>
 					</p>

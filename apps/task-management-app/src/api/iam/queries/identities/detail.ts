@@ -6,6 +6,5 @@ import { identityKeys } from "./keys";
 export const detailQuery = (id: string) =>
 	queryOptions({
 		queryKey: identityKeys.detail(id),
-		queryFn: () =>
-			api.get<ApiResponse<Identity>>(`/iam/identities/${id}`),
+		queryFn: () => api.get<ApiResponse<Identity>>(`/iam/identities/${id}`),
 	});

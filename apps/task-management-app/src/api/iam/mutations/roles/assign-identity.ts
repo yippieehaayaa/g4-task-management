@@ -5,10 +5,7 @@ import { roleKeys } from "../../queries/roles";
 export function useAssignRoleToIdentity() {
 	const queryClient = useQueryClient();
 	return useMutation({
-		mutationFn: ({
-			id,
-			identityId,
-		}: { id: string; identityId: string }) =>
+		mutationFn: ({ id, identityId }: { id: string; identityId: string }) =>
 			api.post(`/iam/roles/${id}/identities`, { identityId }),
 		onSuccess: (_data, variables) => {
 			queryClient.invalidateQueries({

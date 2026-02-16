@@ -6,6 +6,5 @@ import { policyKeys } from "./keys";
 export const detailQuery = (id: string) =>
 	queryOptions({
 		queryKey: policyKeys.detail(id),
-		queryFn: () =>
-			api.get<ApiResponse<Policy>>(`/iam/policies/${id}`),
+		queryFn: () => api.get<ApiResponse<Policy>>(`/iam/policies/${id}`),
 	});
