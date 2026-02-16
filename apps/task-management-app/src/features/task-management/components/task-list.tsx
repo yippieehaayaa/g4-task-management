@@ -1,7 +1,14 @@
 import { CircleAlert, ListTodoIcon, PlusIcon } from "lucide-react";
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
+import { useAppDispatch, useAppSelector } from "@/store";
+import {
+	closeForm,
+	openCreateForm,
+	openEditForm,
+	setFilters,
+	setFormOpen,
+} from "@/store/slices/task-ui-slice";
 import {
 	Alert,
 	AlertDescription,
@@ -17,34 +24,31 @@ import {
 	useUpdateTask,
 } from "@/api/task-management";
 import type { CreateTaskFormValues, EditTaskFormValues } from "../schemas";
-import type { Task, TaskFilters } from "../types";
+import type { Task } from "../types";
 import { TaskFilters as TaskFiltersComponent } from "./task-filters";
 import { TaskFormDialog } from "./task-form-dialog";
 import { TaskItem } from "./task-item";
 
-const defaultFilters: TaskFilters = {
-	search: "",
-	status: "all",
-	priority: "all",
-};
-
 function TaskList() {
-	const [filters, setFilters] = useState<TaskFilters>(defaultFilters);
-	const [formOpen, setFormOpen] = useState(false);
-	const [editingTask, setEditingTask] = useState<Task | null>(null);
-
+	const dispatch = useAppDispatch();
+	const { filters, formOpen, editingTaskId } = useAppSelector(
+		(state) => state.taskUi,
+	);
 	const listParams = {
 		search: filters.search.trim() || undefined,
 		status: filters.status === "all" ? undefined : filters.status,
 		priority: filters.priority === "all" ? undefined : filters.priority,
 	};
-
 	const { data, isPending, isError, error } = useQuery(listQuery(listParams));
 	const createTask = useCreateTask();
 	const updateTask = useUpdateTask();
 	const deleteTask = useDeleteTask();
 
 	const tasks = data?.data ?? [];
+	const editingTask =
+		editingTaskId != null
+			? tasks.find((t: Task) => t.id === editingTaskId) ?? null
+			: null;
 
 	function handleCreate(values: CreateTaskFormValues) {
 		createTask.mutate(
@@ -56,7 +60,7 @@ function TaskList() {
 				dueDate: values.dueDate?.trim() || undefined,
 			},
 			{
-				onSuccess: () => setFormOpen(false),
+				onSuccess: () => dispatch(closeForm()),
 			},
 		);
 	}
@@ -73,10 +77,7 @@ function TaskList() {
 				dueDate: values.dueDate?.trim() || null,
 			},
 			{
-				onSuccess: () => {
-					setEditingTask(null);
-					setFormOpen(false);
-				},
+				onSuccess: () => dispatch(closeForm()),
 			},
 		);
 	}
@@ -112,10 +113,7 @@ function TaskList() {
 						</p>
 					</div>
 					<Button
-						onClick={() => {
-							setEditingTask(null);
-							setFormOpen(true);
-						}}
+						onClick={() => dispatch(openCreateForm())}
 						className="w-full shrink-0 sm:w-auto"
 					>
 						<PlusIcon className="size-4" aria-hidden />
@@ -130,7 +128,10 @@ function TaskList() {
 					<p className="text-muted-foreground mb-3 text-xs font-medium uppercase tracking-wider sm:mb-4">
 						Filters
 					</p>
-					<TaskFiltersComponent value={filters} onChange={setFilters} />
+					<TaskFiltersComponent
+						value={filters}
+						onChange={(next) => dispatch(setFilters(next))}
+					/>
 				</CardContent>
 			</Card>
 
@@ -174,7 +175,7 @@ function TaskList() {
 						<p className="text-muted-foreground mb-8 max-w-sm text-sm leading-relaxed">
 							Create your first task to get started, or adjust your filters to see existing tasks.
 						</p>
-						<Button variant="outline" size="lg" onClick={() => setFormOpen(true)}>
+						<Button variant="outline" size="lg" onClick={() => dispatch(openCreateForm())}>
 							<PlusIcon className="size-4" aria-hidden />
 							Add task
 						</Button>
@@ -191,10 +192,7 @@ function TaskList() {
 							<TaskItem
 								task={task}
 								onToggleComplete={handleToggleComplete}
-								onEdit={(t) => {
-									setEditingTask(t);
-									setFormOpen(true);
-								}}
+								onEdit={(t) => dispatch(openEditForm(t.id))}
 								onDelete={(t) => deleteTask.mutate(t.id)}
 							/>
 						</li>
@@ -205,10 +203,9 @@ function TaskList() {
 
 			<TaskFormDialog
 				open={formOpen}
-				onOpenChange={(open) => {
-					setFormOpen(open);
-					if (!open) setEditingTask(null);
-				}}
+				onOpenChange={(open) =>
+					dispatch(open ? setFormOpen(true) : closeForm())
+				}
 				mode={editingTask ? "edit" : "create"}
 				task={editingTask}
 				onSubmit={handleSubmit}
