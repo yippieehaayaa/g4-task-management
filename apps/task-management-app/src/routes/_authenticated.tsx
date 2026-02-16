@@ -1,5 +1,6 @@
 import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
+import { DefaultLayout } from "@/components/layouts/layout.default";
 import { useAuth } from "@/context/auth";
 
 export const Route = createFileRoute("/_authenticated")({
@@ -28,5 +29,9 @@ function AuthenticatedLayout() {
 		return null;
 	}
 
-	return <Outlet />;
+	return (
+		<DefaultLayout>
+			<Outlet />
+		</DefaultLayout>
+	);
 }

@@ -17,7 +17,6 @@ import {
 	CardContent,
 	CardDescription,
 	CardHeader,
-	CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
@@ -117,15 +116,14 @@ function SessionManagement({
 		currentSessionId != null && session.id === currentSessionId;
 
 	return (
-		<Card className="mx-auto w-full max-w-2xl border shadow-sm px-5 sm:px-6 py-6 sm:py-8">
-			<CardHeader className="space-y-1.5 pb-5 px-0 pt-0 sm:pb-6">
-				<CardTitle className="text-xl">Sessions</CardTitle>
+		<Card className="mx-auto w-full max-w-2xl border shadow-sm rounded-xl overflow-hidden">
+			<CardHeader className="space-y-1.5 pb-5 px-6 pt-6 sm:pb-6 sm:px-6">
 				<CardDescription>
 					Manage your active sessions. Revoking a session will log that device
 					out.
 				</CardDescription>
 			</CardHeader>
-			<CardContent className="space-y-4 px-0 pt-0 pb-0">
+			<CardContent className="space-y-4 px-6 pt-0 pb-6">
 				<ul className="space-y-3">
 					{sessions.map((session) => {
 						const current = isCurrent(session);

@@ -57,7 +57,7 @@ export function DefaultLayout({ children }: { children?: React.ReactNode }) {
 					</div>
 				</nav>
 			</header>
-			<main className="mx-auto w-full max-w-4xl flex-1 px-5 py-6 sm:px-8 sm:py-8">
+			<main className="mx-auto w-full max-w-4xl flex-1 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
 				{children ?? <Outlet />}
 			</main>
 		</div>

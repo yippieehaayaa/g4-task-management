@@ -15,7 +15,6 @@ import {
 	AlertTitle,
 } from "@/components/ui/alert";
 import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
 	listQuery,
@@ -102,28 +101,17 @@ function TaskList() {
 
 	return (
 		<div className="flex flex-col gap-6">
-			<header className="space-y-2">
-				<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-					<div>
-						<h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-							Tasks
-						</h1>
-						<p className="text-muted-foreground mt-1 text-sm">
-							Create and manage your tasks. Filter by status or priority.
-						</p>
-					</div>
-					<Button
-						onClick={() => dispatch(openCreateForm())}
-						className="w-full shrink-0 sm:w-auto"
-					>
-						<PlusIcon className="size-4" aria-hidden />
-						Add task
-					</Button>
-				</div>
-				<Separator className="mt-4" />
-			</header>
+			<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-end">
+				<Button
+					onClick={() => dispatch(openCreateForm())}
+					className="w-full shrink-0 sm:w-auto"
+				>
+					<PlusIcon className="size-4" aria-hidden />
+					Add task
+				</Button>
+			</div>
 
-			<Card className="border bg-card">
+			<Card className="border bg-card shadow-sm rounded-xl">
 				<CardContent className="p-4 sm:p-5">
 					<p className="text-muted-foreground mb-3 text-xs font-medium uppercase tracking-wider sm:mb-4">
 						Filters
@@ -147,7 +135,7 @@ function TaskList() {
 				<ul className="grid list-none gap-4 p-0 sm:grid-cols-1 lg:gap-5" aria-busy="true" aria-label="Loading tasks">
 					{[1, 2, 3].map((i) => (
 						<li key={i}>
-							<Card className="overflow-hidden border">
+							<Card className="overflow-hidden border rounded-xl shadow-sm">
 								<CardContent className="flex flex-row items-start gap-4 p-5 sm:p-6">
 									<Skeleton className="size-5 shrink-0 rounded-md" />
 									<div className="min-w-0 flex-1 space-y-2">
@@ -164,7 +152,7 @@ function TaskList() {
 					))}
 				</ul>
 			) : tasks.length === 0 ? (
-				<Card className="overflow-hidden border-dashed">
+				<Card className="overflow-hidden border border-dashed rounded-xl shadow-sm">
 					<CardContent className="flex flex-col items-center justify-center py-14 text-center sm:py-20">
 						<div className="bg-muted/50 mb-5 flex size-16 items-center justify-center rounded-full">
 							<ListTodoIcon className="text-muted-foreground size-8" aria-hidden />

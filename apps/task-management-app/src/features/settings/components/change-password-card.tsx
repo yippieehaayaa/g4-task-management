@@ -98,8 +98,8 @@ export function ChangePasswordCard() {
 	}
 
 	return (
-		<Card>
-			<CardHeader>
+		<Card className="border shadow-sm rounded-xl overflow-hidden">
+			<CardHeader className="px-6 pt-6 sm:px-6">
 				<div className="flex items-center gap-3">
 					<div className="flex size-10 shrink-0 items-center justify-center rounded-lg border bg-muted/50">
 						<KeyRound className="text-muted-foreground size-5" />
@@ -112,7 +112,7 @@ export function ChangePasswordCard() {
 					</div>
 				</div>
 			</CardHeader>
-			<CardContent>
+			<CardContent className="px-6 pb-6">
 				<form onSubmit={handleSubmit} className="space-y-4" noValidate>
 					<FormField
 						id="settings-change-password-current"

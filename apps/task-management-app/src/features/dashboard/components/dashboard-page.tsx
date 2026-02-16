@@ -6,7 +6,6 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import {
 	ListTodo,
 	Monitor,
@@ -41,17 +40,7 @@ const navCards = [
 
 export function DashboardPage() {
 	return (
-		<div className="space-y-8">
-			<header className="space-y-2">
-				<h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-					Dashboard
-				</h1>
-				<p className="text-muted-foreground max-w-xl text-sm sm:text-base">
-					Welcome back. Choose where to go next.
-				</p>
-				<Separator className="mt-4" />
-			</header>
-
+		<div className="space-y-6 sm:space-y-8">
 			<section className="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
 				{navCards.map(({ to, title, description, icon: Icon, iconClass }) => (
 					<Link
@@ -59,7 +48,7 @@ export function DashboardPage() {
 						to={to}
 						className="group block rounded-xl outline-none transition-opacity focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background hover:opacity-95"
 					>
-						<Card className="h-full overflow-hidden border transition-colors hover:border-accent/50 hover:shadow-sm group-focus-visible:border-accent/50">
+						<Card className="h-full overflow-hidden border shadow-sm rounded-xl transition-colors hover:border-accent/50 hover:shadow-md group-focus-visible:border-accent/50">
 							<CardHeader className="gap-4 pb-3 sm:pb-4">
 								<div className="flex items-start gap-4">
 									<div

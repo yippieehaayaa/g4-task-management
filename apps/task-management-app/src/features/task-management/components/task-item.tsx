@@ -69,7 +69,7 @@ function TaskItem({ task, onToggleComplete, onEdit, onDelete }: TaskItemProps) {
 		<>
 			<Card
 				className={cn(
-					"overflow-hidden border-l-4 transition-shadow hover:shadow-md",
+					"overflow-hidden border-l-4 rounded-xl shadow-sm transition-shadow hover:shadow-md",
 					priorityBorderClass[task.priority],
 				)}
 			>

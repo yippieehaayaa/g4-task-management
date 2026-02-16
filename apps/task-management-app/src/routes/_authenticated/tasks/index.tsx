@@ -6,17 +6,5 @@ export const Route = createFileRoute("/_authenticated/tasks/")({
 });
 
 function TasksPage() {
-	return (
-		<div>
-			<div className="mb-6">
-				<h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
-					Task Management
-				</h1>
-				<p className="text-muted-foreground text-sm">
-					Manage your tasks.
-				</p>
-			</div>
-			<TaskList />
-		</div>
-	);
+	return <TaskList />;
 }

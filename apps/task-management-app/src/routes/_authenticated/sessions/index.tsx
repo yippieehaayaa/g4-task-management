@@ -21,15 +21,7 @@ function SessionsPage() {
 	if (isLoading) return <div className="text-muted-foreground">Loading sessions…</div>;
 
 	return (
-		<div>
-			<div className="mb-6">
-				<h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
-					Sessions
-				</h1>
-				<p className="text-muted-foreground text-sm">
-					Manage your active sessions and devices.
-				</p>
-			</div>
+		<div className="space-y-6">
 			<SessionManagement
 				sessions={sessions}
 				currentSessionId={currentSessionId}
