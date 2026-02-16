@@ -34,9 +34,9 @@ const createRateLimiter = (windowMs: number, limit: number) =>
       );
       res.setHeader("Retry-After", retryAfterSeconds);
       next(
-        new TooManyRequestsError("Too many requests", {
-          retryAfterSeconds,
-        }),
+        new TooManyRequestsError(
+          `Too many requests. Retry after ${retryAfterSeconds} seconds.`,
+        ),
       );
     },
   });
