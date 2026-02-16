@@ -52,6 +52,7 @@ export {
 	useUpdateRole,
 } from "./iam";
 export {
+	listQuery,
 	taskKeys,
 	taskQueries,
 	useCreateTask,

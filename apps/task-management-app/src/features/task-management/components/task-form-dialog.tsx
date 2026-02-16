@@ -43,7 +43,7 @@ const defaultCreateValues: CreateTaskFormValues = {
 function getDefaultEditValues(task: Task): EditTaskFormValues {
 	return {
 		title: task.title,
-		description: task.description,
+		description: task.description ?? "",
 		status: task.status,
 		priority: task.priority,
 		dueDate: task.dueDate ?? undefined,
@@ -101,7 +101,7 @@ function TaskFormDialog({
 		e.preventDefault();
 		const payload = {
 			...values,
-			dueDate: values.dueDate && values.dueDate.trim() ? values.dueDate : undefined,
+			dueDate: values.dueDate?.trim() ? values.dueDate : undefined,
 		};
 		const result = schema.safeParse(payload);
 		if (!result.success) {

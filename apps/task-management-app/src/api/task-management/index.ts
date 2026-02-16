@@ -1,6 +1,6 @@
 // ── Queries ──────────────────────────────────────────────────────────────────
 
-export { taskKeys, taskQueries } from "./queries/tasks";
+export { detailQuery, listQuery, taskKeys, taskQueries } from "./queries/tasks";
 
 // ── Mutations ────────────────────────────────────────────────────────────────
 

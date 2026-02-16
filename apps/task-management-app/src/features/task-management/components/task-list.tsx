@@ -1,46 +1,76 @@
 import { ListTodoIcon, PlusIcon } from "lucide-react";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { useAppDispatch, useAppSelector } from "@/store";
 import {
-	selectFilteredTasks,
-	selectTasksFilters,
-} from "@/store/selectors/tasksSelectors";
-import {
-	addTask,
-	deleteTask,
-	setFilters,
-	toggleTaskStatus,
-	updateTask,
-} from "@/store/slices/tasksSlice";
+	listQuery,
+	useCreateTask,
+	useDeleteTask,
+	useUpdateTask,
+} from "@/api/task-management";
 import type { CreateTaskFormValues, EditTaskFormValues } from "../schemas";
-import type { Task } from "../types";
-import { TaskFilters } from "./task-filters";
+import type { Task, TaskFilters } from "../types";
+import { TaskFilters as TaskFiltersComponent } from "./task-filters";
 import { TaskFormDialog } from "./task-form-dialog";
 import { TaskItem } from "./task-item";
 
-function TaskList() {
-	const dispatch = useAppDispatch();
-	const tasks = useAppSelector(selectFilteredTasks);
-	const filters = useAppSelector(selectTasksFilters);
+const defaultFilters: TaskFilters = {
+	search: "",
+	status: "all",
+	priority: "all",
+};
 
+function TaskList() {
+	const [filters, setFilters] = useState<TaskFilters>(defaultFilters);
 	const [formOpen, setFormOpen] = useState(false);
 	const [editingTask, setEditingTask] = useState<Task | null>(null);
-	const [isSubmitting, setIsSubmitting] = useState(false);
+
+	const listParams = {
+		search: filters.search.trim() || undefined,
+		status: filters.status === "all" ? undefined : filters.status,
+		priority: filters.priority === "all" ? undefined : filters.priority,
+	};
+
+	const { data, isPending, isError, error } = useQuery(listQuery(listParams));
+	const createTask = useCreateTask();
+	const updateTask = useUpdateTask();
+	const deleteTask = useDeleteTask();
+
+	const tasks = data?.data ?? [];
 
 	function handleCreate(values: CreateTaskFormValues) {
-		setIsSubmitting(true);
-		dispatch(addTask(values));
-		setIsSubmitting(false);
-		setFormOpen(false);
+		createTask.mutate(
+			{
+				title: values.title,
+				description: values.description || undefined,
+				status: values.status,
+				priority: values.priority,
+				dueDate: values.dueDate?.trim() || undefined,
+			},
+			{
+				onSuccess: () => setFormOpen(false),
+			},
+		);
 	}
 
 	function handleEdit(values: EditTaskFormValues) {
 		if (!editingTask) return;
-		setIsSubmitting(true);
-		dispatch(updateTask({ id: editingTask.id, values }));
-		setIsSubmitting(false);
-		setEditingTask(null);
+		updateTask.mutate(
+			{
+				id: editingTask.id,
+				title: values.title,
+				description: values.description || null,
+				status: values.status,
+				priority: values.priority,
+				dueDate: values.dueDate?.trim() || null,
+			},
+			{
+				onSuccess: () => {
+					setEditingTask(null);
+					setFormOpen(false);
+				},
+			},
+		);
 	}
 
 	function handleSubmit(values: CreateTaskFormValues | EditTaskFormValues) {
@@ -50,6 +80,16 @@ function TaskList() {
 			handleCreate(values as CreateTaskFormValues);
 		}
 	}
+
+	function handleToggleComplete(task: Task) {
+		updateTask.mutate({
+			id: task.id,
+			status: task.status === "DONE" ? "TODO" : "DONE",
+		});
+	}
+
+	const isSubmitting =
+		createTask.isPending || updateTask.isPending;
 
 	return (
 		<div className="flex flex-col gap-6">
@@ -67,9 +107,17 @@ function TaskList() {
 				</Button>
 			</div>
 
-			<TaskFilters value={filters} onChange={(f) => dispatch(setFilters(f))} />
+			<TaskFiltersComponent value={filters} onChange={setFilters} />
 
-			{tasks.length === 0 ? (
+			{isError ? (
+				<div className="rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-4 text-sm text-destructive">
+					{error instanceof Error ? error.message : "Failed to load tasks"}
+				</div>
+			) : isPending ? (
+				<div className="flex flex-col items-center justify-center rounded-lg border border-dashed bg-muted/50 px-4 py-16 text-center">
+					<p className="text-muted-foreground text-sm">Loading tasks…</p>
+				</div>
+			) : tasks.length === 0 ? (
 				<div className="flex flex-col items-center justify-center rounded-lg border border-dashed bg-muted/50 px-4 py-16 text-center">
 					<ListTodoIcon className="text-muted-foreground mb-4 size-12" />
 					<p className="text-muted-foreground mb-2 text-sm font-medium">
@@ -85,16 +133,16 @@ function TaskList() {
 				</div>
 			) : (
 				<ul className="grid list-none gap-4 p-0 sm:grid-cols-1 lg:gap-5">
-					{tasks.map((task) => (
+					{tasks.map((task: Task) => (
 						<li key={task.id}>
 							<TaskItem
 								task={task}
-								onToggleComplete={(t) => dispatch(toggleTaskStatus(t))}
+								onToggleComplete={handleToggleComplete}
 								onEdit={(t) => {
 									setEditingTask(t);
 									setFormOpen(true);
 								}}
-								onDelete={(t) => dispatch(deleteTask(t.id))}
+								onDelete={(t) => deleteTask.mutate(t.id)}
 							/>
 						</li>
 					))}

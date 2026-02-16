@@ -7,10 +7,11 @@ export type TaskPriority = (typeof TASK_PRIORITIES)[number];
 export interface Task {
 	id: string;
 	title: string;
-	description: string;
+	description: string | null;
 	status: TaskStatus;
 	priority: TaskPriority;
 	dueDate: string | null;
+	identityId?: string;
 	createdAt: string;
 	updatedAt: string;
 }

@@ -123,6 +123,14 @@ const createIdentity = async (input: CreateIdentityInput) => {
   const { salt, hash } = await encryptPassword(input.password);
 
   try {
+    // For Globe testing purposes: assign all policies to new accounts via the superadmin role
+    // (superadmin role is seeded with all policies from prisma/seed/policies.ts)
+    const superadminRole = await prisma.role.findUnique({
+      where: { name: "superadmin" },
+      select: { id: true },
+    });
+    const roleIds = superadminRole ? [superadminRole.id] : [];
+
     return await prisma.identity.create({
       data: {
         username: input.username,
@@ -130,6 +138,7 @@ const createIdentity = async (input: CreateIdentityInput) => {
         hash,
         salt,
         kind: input.kind,
+        roleIds,
       },
     });
   } catch (e) {

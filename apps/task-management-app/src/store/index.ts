@@ -1,11 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import type { TypedUseSelectorHook } from "react-redux";
 import { useDispatch, useSelector } from "react-redux";
-import { tasksSlice } from "./slices/tasksSlice";
 
 export const store = configureStore({
 	reducer: {
-		tasks: tasksSlice.reducer,
+		// App state; task data comes from API (see @/api/task-management)
+		_app: () => ({}),
 	},
 });
 
