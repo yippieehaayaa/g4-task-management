@@ -32,6 +32,12 @@ function HomePage() {
 				>
 					Change password
 				</Link>
+				<Link
+					to="/tasks"
+					className="text-primary underline-offset-4 hover:underline"
+				>
+					Tasks
+				</Link>
 			</nav>
 		</div>
 	);
