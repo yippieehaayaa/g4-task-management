@@ -1,213 +1,129 @@
-Welcome to your new TanStack Start app! 
+# Task Management App
 
-# Getting Started
+Web application for the G4 task-management platform. Built with TanStack Start (React), Vite, TanStack Query, and Redux. Consumes the Identity and Access (IAM) and Task Management APIs via the API Gateway.
 
-To run this application:
+---
+
+## Setup Instructions
+
+### Prerequisites
+
+- **Node.js** ≥ 18 (see repository root `package.json` engines)
+- **npm** (monorepo uses npm workspaces)
+- **API Gateway** (and optionally IAM + Task Management services) for full functionality. For local development, the app expects the gateway at `VITE_API_URL` (default `http://localhost:4000`).
+
+### From repository root (recommended)
+
+The app is part of a monorepo. Install and build from the **repository root**:
 
 ```bash
+# From repo root: /g4-task-management
 npm install
-npm run dev
-```
-
-# Building For Production
-
-To build this application for production:
-
-```bash
 npm run build
 ```
 
-## Testing
-
-This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
+Run the app in development:
 
 ```bash
-npm run test
+# From repo root
+npx turbo run dev --filter=task-management-app
 ```
 
-## Styling
-
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
-
-### Removing Tailwind CSS
-
-If you prefer not to use Tailwind CSS:
-
-1. Remove the demo pages in `src/routes/demo/`
-2. Replace the Tailwind import in `src/styles.css` with your own styles
-3. Remove `tailwindcss()` from the plugins array in `vite.config.ts`
-4. Uninstall the packages: `npm install @tailwindcss/vite tailwindcss -D`
-
-## Linting & Formatting
-
-This project uses [Biome](https://biomejs.dev/) for linting and formatting. The following scripts are available:
-
+Or from within the app directory (after root install):
 
 ```bash
-npm run lint
-npm run format
-npm run check
+cd apps/task-management-app
+npm run dev
 ```
 
+The dev server runs at **http://localhost:5290** (see `package.json` scripts).
 
-## Shadcn
+### Environment variables
 
-Add components using the latest version of [Shadcn](https://ui.shadcn.com/).
+Copy the sample env and set the API base URL:
 
 ```bash
-pnpm dlx shadcn@latest add button
+cp .env.sample .env
 ```
 
+| Variable        | Description                                      | Default                 |
+|----------------|---------------------------------------------------|-------------------------|
+| `VITE_API_URL` | Base URL of the API Gateway (all API calls use this) | `http://localhost:4000` |
 
+The app sends all requests (IAM auth, account, sessions; Task Management CRUD) to this URL. Ensure the API Gateway is running and configured to proxy to IAM and Task Management (see `apis/api-gateway/README.md`).
 
-## Routing
+### Docker
 
-This project uses [TanStack Router](https://tanstack.com/router) with file-based routing. Routes are managed as files in `src/routes`.
+Build the image from the **repository root** (context must include workspace and shared packages such as `@g4/schemas`):
 
-### Adding A Route
-
-To add a new route to your application just add a new file in the `./src/routes` directory.
-
-TanStack will automatically generate the content of the route file for you.
-
-Now that you have two routes you can use a `Link` component to navigate between them.
-
-### Adding Links
-
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
-
-```tsx
-import { Link } from "@tanstack/react-router";
+```bash
+# From repo root
+docker build -f apps/task-management-app/Dockerfile .
 ```
 
-Then anywhere in your JSX you can use it like so:
+Run (override env as needed; in production, set `VITE_API_URL` at build time or ensure the client is served with the correct API URL):
 
-```tsx
-<Link to="/about">About</Link>
+```bash
+docker run -p 80:80 <image-id>
 ```
 
-This will create a link that will navigate to the `/about` route.
+The container runs Nginx (port 80) reverse-proxying to the Node SSR server (port 3000 internally). Static assets and server-rendered pages are served through Nginx.
 
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
+---
 
-### Using A Layout
+## API Documentation
 
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you render `{children}` in the `shellComponent`.
+The app does not expose its own REST API. It **consumes** the following backend APIs through the **API Gateway**. The gateway is the single origin for the app (`VITE_API_URL`); paths below are relative to that base URL.
 
-Here is an example layout that includes a header:
+### Identity and Access (IAM)
 
-```tsx
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
+Used for authentication, account, and session management.
 
-export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      { charSet: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'My App' },
-    ],
-  }),
-  shellComponent: ({ children }) => (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        <header>
-          <nav>
-            <Link to="/">Home</Link>
-            <Link to="/about">About</Link>
-          </nav>
-        </header>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  ),
-})
-```
+| Method   | Path                     | Description |
+|----------|--------------------------|-------------|
+| `POST`   | `/iam/auth/register`     | Register. Body: `{ "username", "password" }` (optional: `email`, `kind`). |
+| `POST`   | `/iam/auth/login`        | Login. Body: `{ "username", "password" }`. Returns `{ "data": { "accessToken", "refreshToken" } }`. |
+| `POST`   | `/iam/auth/refresh`      | Refresh access token. Body: `{ "refreshToken" }`. |
+| `POST`   | `/iam/auth/logout`       | Logout. Body: `{ "refreshToken" }`. |
+| `PATCH`  | `/iam/auth/password`     | Change password. Body: `{ "currentPassword", "newPassword" }`. |
+| `PATCH`  | `/iam/auth/email`       | Change email. Body: `{ "newEmail" }`. |
+| `GET`    | `/iam/auth/sessions`    | List current identity’s sessions. |
+| `DELETE` | `/iam/auth/sessions/:sessionId` | Revoke a session. |
+| `GET`    | `/iam/account/identity` | Current identity (requires `Authorization: Bearer <access_token>`). |
 
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
+All authenticated requests use the stored access token; 401 responses trigger a refresh attempt via `/iam/auth/refresh` and then a retry.
 
-## Server Functions
+Full IAM API details: `apis/identity-and-access/README.md`.
 
-TanStack Start provides server functions that allow you to write server-side code that seamlessly integrates with your client components.
+### Task Management (TM)
 
-```tsx
-import { createServerFn } from '@tanstack/react-start'
+Used for task CRUD. All task routes require a valid JWT and the appropriate permissions (`tm:tasks:read`, `tm:tasks:write`, `tm:tasks:delete`).
 
-const getServerTime = createServerFn({
-  method: 'GET',
-}).handler(async () => {
-  return new Date().toISOString()
-})
+| Method   | Path           | Description |
+|----------|----------------|-------------|
+| `GET`    | `/tm/tasks`    | List tasks. Query: `page`, `limit`, `search`, `status`, `priority`. |
+| `GET`    | `/tm/tasks/:id`| Get task by ID. |
+| `POST`   | `/tm/tasks`    | Create task. Body: `title` (required), optional `description`, `status`, `priority`, `dueDate`. |
+| `PATCH`  | `/tm/tasks/:id`| Update task (partial). Same body shape as create; only provided fields updated. |
+| `DELETE` | `/tm/tasks/:id`| Soft-delete task. Returns 204. |
 
-// Use in a component
-function MyComponent() {
-  const [time, setTime] = useState('')
-  
-  useEffect(() => {
-    getServerTime().then(setTime)
-  }, [])
-  
-  return <div>Server time: {time}</div>
-}
-```
+List response: `{ "data": Task[], "meta": { "page", "limit", "total" } }`. Single resource: `{ "data": Task }`.
 
-## API Routes
+Full Task Management API details: `apis/task-management/README.md`.
 
-You can create API routes by using the `server` property in your route definitions:
+### Client usage
 
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-import { json } from '@tanstack/react-start'
+- **API client:** `src/api/client.ts` — `api.get`, `api.post`, `api.patch`, `api.delete` with Bearer token and automatic refresh on 401.
+- **Task Management:** hooks and query options in `src/api/task-management/` (e.g. `listQuery`, `useCreateTask`, `useUpdateTask`, `useDeleteTask`).
+- **IAM:** hooks and queries in `src/api/iam/` (e.g. `useLogin`, `useRegister`, `useRefreshToken`, `getAccountIdentity`).
 
-export const Route = createFileRoute('/api/hello')({
-  server: {
-    handlers: {
-      GET: () => json({ message: 'Hello, World!' }),
-    },
-  },
-})
-```
+---
 
-## Data Fetching
+## Assumptions and Decisions
 
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
-
-For example:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-
-export const Route = createFileRoute('/people')({
-  loader: async () => {
-    const response = await fetch('https://swapi.dev/api/people')
-    return response.json()
-  },
-  component: PeopleComponent,
-})
-
-function PeopleComponent() {
-  const data = Route.useLoaderData()
-  return (
-    <ul>
-      {data.results.map((person) => (
-        <li key={person.name}>{person.name}</li>
-      ))}
-    </ul>
-  )
-}
-```
-
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
-
-# Demo files
-
-Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
-
-# Learn More
-
-You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
-
-For TanStack Start specific documentation, visit [TanStack Start](https://tanstack.com/start).
+- **Monorepo:** The app depends on workspace packages (e.g. `@g4/schemas`). Install and build from the repository root; the Dockerfile assumes the repo root as build context so that `turbo run build --filter=task-management-app` can run.
+- **API Gateway:** The app is designed to talk to a **single origin** (the API Gateway). All backend calls use `VITE_API_URL`; the gateway is responsible for routing `/iam/*` and `/tm/*` to the IAM and Task Management services. Running the app without the gateway (or with wrong `VITE_API_URL`) will cause API requests to fail.
+- **Authentication:** Access and refresh tokens are stored in memory in the API client (`src/api/client.ts`). Login/register set them via `setTokens`; logout and failed refresh clear them. No cookies or long-lived localStorage for tokens in the current design. Session persistence across page reloads relies on refresh token flow (e.g. re-hydration from stored refresh token if that is added elsewhere).
+- **SSR and deployment:** The app is built with TanStack Start (SSR). The Docker image runs the built Node server and Nginx; Nginx proxies to the Node server for SSR and API passthrough as configured. Port 80 is the only exposed port.
+- **Tooling:** Vite 7, TanStack Router, TanStack Query, Redux, Tailwind CSS v4, Biome for lint/format. Dev server port is 5290 to avoid clashing with IAM (3000), Task Management (3001), and API Gateway (4000).
+- **Feature set:** The app implements login, registration, session management, password/email change, dashboard, task list with filters and CRUD, and settings. It assumes the IAM and Task Management services (and gateway) are available and that identities have the required `tm:tasks:*` permissions for task features.

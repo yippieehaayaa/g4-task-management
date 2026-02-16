@@ -1,5 +1,9 @@
 {
   "name": "task-management-app",
+  "version": "1.0.0",
+  "author": "Joshua Dave E. Oropilla <joshdave0915@gmail.com>",
+  "description": "Task Management App",
+  "license": "MIT",
   "private": true,
   "type": "module",
   "scripts": {
